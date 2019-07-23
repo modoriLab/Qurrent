@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="onet.com.admin.dao.AdminDao">
+<!-- 태용 시작 -->
+<sql id="search">
+	<if test="searchType =='all'">
+		and (c.class_name like concat('%',#{keyword},'%') or c.teacher_name like concat('%',#{keyword},'%'))
+	</if>
+	<if test='searchType =="ing"'>
+		and (select now() between c.class_start_date and c.class_end_date)
+		and (c.class_name like concat('%',#{keyword},'%') or c.teacher_name like concat('%',#{keyword},'%'))
+	</if>
+	<if test='searchType =="end"'>
+		and c.class_end_date &lt; now()
+		and (c.class_name like concat('%',#{keyword},'%') or c.teacher_name like concat('%',#{keyword},'%'))
+	</if>
+</sql>
+
+<sql id="adminexampapersearch">
+	<if test="searchType=='all'">
+		<if test='keyword != ""'>
+			and (ep.exam_paper_name like concat('%',#{keyword},'%') or ep.member_id like concat('%',#{keyword},'%') or ep.exam_paper_desc like concat('%',#{keyword},'%') or m.class_name like concat('%',#{keyword},'%'))
+		</if>
+	</if>
+	<if test='searchType =="n"'>
+		and m.class_name like concat('%',#{keyword},'%')
+	</if>
+	<if test='searchType =="p"'>
+		and ep.exam_paper_name like concat('%',#{keyword},'%')
+	</if>
+</sql>
+<sql id="adminexaminfosearch">
+<where>
+	<if test="searchType2=='all'">
+		and (exam_info_name like concat('%',#{keyword},'%') or class_name like concat('%',#{keyword},'%'))
+	</if>
+	<if test='searchType2 =="n"'>
+		and class_name like concat('%',#{keyword},'%')
+	</if>
+	<if test='searchType2 =="p"'>
+		and exam_info_name like concat('%',#{keyword},'%')
+	</if>
+</where>
+</sql>
+<select id="adminMainView" resultType="onet.com.vo.ClassDto">
+	select c.class_num, c.class_name, c.teacher_name, c.class_start_date, c.class_end_date, c.class_enable, 
+	ifnull(count(m.member_id) , 0) as class_student_count
+	from class c left outer join member m 
+	on (m.class_name = c.class_name)
+	where c.class_enable = 1
+	<include refid="search"></include>
+	group by c.class_name
+	order by c.class_start_date desc
+	limit #{begin}, 8
+</select>	
+
+<insert id="classInsert" parameterType="onet.com.vo.ClassDto">
+	insert into class(class_name, teacher_name, class_start_date, class_end_date, class_enable) values(#{class_name}, #{teacher_name}, #{class_start_date}, #{class_end_date}, 1);
+</insert>
+<select id="classCheck" resultType="String">
+	select class_name from class where class_name = #{class_name}
+</select>
+
+<!-- 태용 끝 -->
+
+<!-- #####################    재훈 시작       ####################### -->
+<!-- 관리자 - 문제관리 페이지 문제 검색 기능 -->
+<sql id="adminQuestionSearch">
+<where>
+   <if test="param1 !=''">
+      lg.lg_category_code = #{param1}
+      <if test="param2 != ''">
+         and md.md_category_code = #{param2}
+         <if test="param3 != ''">
+            and sm.sm_category_code = #{param3}
+            <if test = "param6 != ''">
+               and (qs.question_type like concat('%',#{param6},'%') 
+               or qs.question_name like concat('%',#{param6},'%') 
+               or qs.member_id like concat('%',#{param6},'%') 
+               or lv.level_name like concat('%',#{param6},'%'))
+            </if>
+         </if>
+         <if test="param3 =='' and param6 !=''">
+            and (qs.question_type like concat('%',#{param6},'%') 
+               or qs.question_name like concat('%',#{param6},'%') 
+               or qs.member_id like concat('%',#{param6},'%') 
+               or lv.level_name like concat('%',#{param6},'%')
+               or sm.sm_category_code = #{param3})
+         </if>
+      </if>
+      <if test="param2 =='' and param6 !=''">
+         and (qs.question_type like concat('%',#{param6},'%') 
+               or qs.question_name like concat('%',#{param6},'%') 
+               or qs.member_id like concat('%',#{param6},'%') 
+               or lv.level_name like concat('%',#{param6},'%')
+               or sm.sm_category_code = #{param3}
+               or md.md_category_code = #{param2})
+      </if>
+   </if>
+   <if test="param4 !=''">
+      and lv.level_code=#{param4}
+   </if>
+   <if test="param5 !=''">
+      and qs.question_type=#{param5}
+   </if>
+    <if test="param1 == '' and param6 != ''">
+      and qs.question_type like concat('%',#{param6},'%') 
+            or qs.question_name like concat('%',#{param6},'%') 
+            or qs.member_id like concat('%',#{param6},'%') 
+            or lv.level_name like concat('%',#{param6},'%') 
+            or sm.sm_category_name like concat('%',#{param6},'%') 
+            or md.md_category_name like concat('%',#{param6},'%') 
+            or lg.lg_category_name like concat('%',#{param6},'%')
+   </if>
+</where>
+</sql>
+
+<!-- 문제관리 문제 검색 -->
+<select id="questionSearch" resultType="onet.com.vo.QuestionDto">
+	select * from question qs join question_sm_category sm on (qs.sm_category_code = sm.sm_category_code) 
+	join question_md_category md on (sm.md_category_code = md.md_category_code) 
+	join question_lg_category lg on (lg.lg_category_code = md.lg_category_code)
+	join question_level lv on (qs.level_code = lv.level_code)
+	<include refid="adminQuestionSearch"></include>
+	order by question_num desc;
+</select>
+
+<!-- 문제분류 리스트 -->
+<select id="lgCategoryList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select * from question_lg_category
+</select>
+<select id="mdCategoryList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select * from question_md_category
+</select>
+<select id="smCategoryList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select * from question_sm_category
+</select>
+
+<!-- 문제난이도 리스트 -->
+<select id="questionLevelList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select * from question_level
+</select>
+
+<!-- 전체 문제 리스트   -->
+<select id="question" parameterType="hashmap" resultType="onet.com.vo.QuestionDto">
+	select question_num, question_type,question_name, question_img,question_answer,question_correct_ratio,question_select_count, sm_category_code,
+	(select md_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code)) as 'md_category_code',
+	(select lg_category_code from question_lg_category where lg_category_code = (select lg_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code))) as 'lg_category_code',
+   (select sm_category_name from question_sm_category where sm_category_code = question.sm_category_code) as 'sm_category_name',
+   (select md_category_name from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code)) as 'md_category_name',
+   (select lg_category_name from question_lg_category where lg_category_code = (select lg_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code))) as 'lg_category_name',
+   (select level_name from question_level where level_code = question.level_code) as 'level_name',
+   member_id
+   from question order by question_num desc;
+</select>
+<select id="question_choice" parameterType="hashmap" resultType="onet.com.vo.Question_choiceDto">
+	select * from question_choice
+</select>
+
+<!-- 새 문제 만들기 -->
+<insert id="insertQuestion" parameterType="onet.com.vo.QuestionDto"
+useGeneratedKeys="true" keyProperty="question_num" keyColumn="question_num">
+	insert into question(question_type,question_name,question_img,
+	question_answer,sm_category_code,level_code,member_id) 
+	values(#{question_type},#{question_name},#{question_img},#{question_answer},#{sm_category_code},#{level_code},#{member_id});
+
+	<selectKey keyProperty="question_num" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID();
+    </selectKey> 
+</insert>
+<insert id="insertQuestionChoice">
+	insert into question_choice(question_num, question_choice_num, question_choice_content, question_choice_image) 
+	values(#{param1},#{param2},#{param3}, #{param4});
+</insert>
+<insert id="insertQuestionChoiceNoImg">
+	insert into question_choice(question_num, question_choice_num, question_choice_content) 
+	values(#{param1},#{param2},#{param3});
+</insert>
+
+<!-- #####################        재훈 끝                #####################-->
+
+<!-- 영준 - 10.10 회원관리 관련 시작 -->
+<select id="memberList" resultType="onet.com.vo.MemberDto">
+	select m.class_name, m.member_id, m.member_name, m.member_email,
+	m.member_phone, mr.role_code, r.role_desc,m.member_enable 
+	from member m, member_role mr, role r
+	where m.member_id=mr.member_id and mr.role_code = r.role_code
+</select>
+
+<select id="adminMemberView" resultType="onet.com.vo.MemberDto">
+	SELECT m.class_name, m.member_id, m.member_name, m.member_email,
+	m.member_phone, mr.role_code, r.role_desc, m.member_enable
+    FROM member m, member_role mr, role r
+    WHERE m.member_id=mr.member_id and mr.role_code = r.role_code
+</select>
+
+<!-- 영준 10.20 회원관리 회원권한 셀렉트 시작 -->
+<select id="roleList" parameterType="hashmap" resultType="onet.com.vo.RoleDto">
+	SELECT * FROM role
+	WHERE not role_code='ROLE_ADMIN'
+</select>
+
+<!-- 영준 10.20 회원관리 회원권한 셀렉트 끝 -->
+
+<!-- 영준 - 10.12 회원관리 회원정보 수정 시작 -->
+<update id="updateMember" parameterType="onet.com.vo.MemberDto">
+	UPDATE member m, member_role mr
+	SET m.member_email=#{member_email}, 
+	m.member_phone=#{member_phone}, m.class_name=#{class_name},
+	mr.role_code=#{role_code}
+	where m.member_id=#{member_id} and mr.member_id=#{member_id}
+</update>
+<!-- 영준 - 10.12 회원관리 회원정보 수정 끝 -->
+
+<!-- 영준 10.15 회원정보 삭제(실제 삭제X)/선택회원 일괄삭제 시작 -->
+<update id="deleteMember" parameterType="String">
+	UPDATE member
+	SET member_enable=0
+	WHERE member_id=#{member_id}
+</update>
+<!-- 영준 10.15 회원정보 삭제(실제 삭제X)/선택회원 일괄삭제 끝 -->
+
+<!-- 양회준 10-22 admin 회원관리 비동기 검색 시작 -->
+<sql id="memberSrch">
+	<where>
+		<if test="param1 != ''">
+			mr.role_code = #{param1}		
+		</if>
+		<if test="param2 != ''">
+			and m.class_name = #{param2}
+		</if>			
+		<if test="param3 != ''">
+			<choose>
+				<when test='param3 == "name"'>
+					and m.member_name like concat('%',#{param4},'%')
+				</when>
+				<when test='param3 == "id"'>
+					and m.member_id like concat('%',#{param4},'%')
+				</when>
+				<when test='param3 == "email"'>
+					and m.member_email like concat('%',#{param4},'%')
+				</when>
+			</choose>
+		</if>		
+	</where>
+</sql>
+
+<select id="memberSearchAjax" resultType="onet.com.vo.MemberDto">
+	select m.class_name, m.member_id, m.member_name, m.member_email,
+	m.member_phone, mr.role_code, r.role_desc, m.member_enable
+	from member m join member_role mr join role r
+	on m.member_id=mr.member_id and mr.role_code = r.role_code
+	<include refid="memberSrch"></include>
+</select>
+<!-- 양회준 10-22 admin 회원관리 비동기 검색 끝 -->
+<!-- 양회준 10-23 admin 회원관리 비동기 일괄등록 -->
+<update id="updateStudentsAjax">	
+	update member_role set role_code = 'ROLE_STUDENT' where member_id = #{updateStudent};
+</update>
+<!-- 양회준 10-23 admin 회원관리 비동기 일괄삭제 -->	
+<update id="deleteStudentsAjax">	
+	update member set member_enable = 0 where member_id = #{deleteStudent};
+</update>
+
+<!-- 양회준 10-23 admin 회원관리 끝 -->
+
+
+<!-- 민지 10.12 클래스멤버리스트 ,클래스 리스트 관련  -->
+
+<select id="classList" parameterType="hashmap" resultType="onet.com.vo.ClassDto">
+	select class_name, teacher_name, class_start_date, class_end_date, class_enable, class_num
+	 from class <include refid="search"></include>
+</select>
+
+<select id="classlist" parameterType="onet.com.vo.ClassDto" resultType="onet.com.vo.ClassDto">
+	select class_name, teacher_name, class_start_date, class_end_date, class_enable
+	 from class where class_num=#{class_num}
+</select>
+<!-- 클래스 멤버 수정 -->
+ <update id="classMemberUpdate" parameterType="onet.com.vo.MemberDto">
+ UPDATE member m, member_role mr SET m.member_email=#{member_email}, m.member_phone=#{member_phone}, m.class_name=#{class_name}, mr.role_code=#{role_code} where m.member_id=#{member_id} and mr.member_id=#{member_id}
+ </update>
+
+<!-- 민지 10.12 클래스멤버리스트 관련 끝 -->
+
+
+<!-- 민지 10.15 클래스 수정 관련 -->
+<update id="classUpdate" parameterType="onet.com.vo.ClassDto">
+ UPDATE class SET class_name=#{class_name}, teacher_name=#{teacher_name},class_start_date=#{class_start_date}, class_end_date=#{class_end_date} where class_num=#{class_num}
+ </update>
+<!-- 민지 10.15 클래스 수정 관련 끝 -->
+
+
+<!-- 민지 10.13 클래스 멤버 삭제 관련 -->
+ <update id="classMemberDelete" parameterType="onet.com.vo.MemberDto">
+ UPDATE member m, member_role mr SET m.class_name='no_class', mr.role_code='ROLE_MEMBER' where m.member_id=#{member_id} and mr.member_id=#{member_id}
+</update>
+<!-- 민지 10.13 클래스 멤버 삭제 관련 끝 -->
+
+
+
+<!-- 정원 10.15 문제분류관리 insert 시작 -->
+
+<!-- +1 해주기 위해서 마지막 행 값 가져오는 쿼리 -->
+<select id="lgCatAddCheak" resultType="int">
+	select CONVERT(substring(lg_category_code, 2), UNSIGNED) as cate_num from question_lg_category order by cate_num desc limit 1
+</select>
+
+<select id="mdCatAddCheck" resultType="int">
+	select CONVERT(substring(md_category_code, 2), UNSIGNED) as cate_num from question_md_category order by cate_num desc limit 1
+</select>
+
+<select id="smCatAddCheck" resultType="int">
+	select CONVERT(substring(sm_category_code, 2), UNSIGNED) as cate_num from question_sm_category order by cate_num desc limit 1
+</select>
+
+<!-- 대분류,중분류,소분류 데이터 추가 쿼리 -->
+<insert id="lgCatAdd" parameterType="onet.com.vo.CategoryDto">
+	insert into question_lg_category values (#{lg_category_code},#{lg_category_name})
+</insert> 
+
+<insert id="mdCatAdd" parameterType="onet.com.vo.CategoryDto">
+	insert into question_md_category values(#{md_category_code},#{md_category_name},#{lg_category_code})
+</insert>
+
+<insert id="smCatAdd" parameterType="onet.com.vo.CategoryDto">
+	insert into question_sm_category values(#{sm_category_code},#{sm_category_name},#{md_category_code})
+</insert>
+
+<!-- select 박스의 name값을 통해 code로 가지고오는 쿼리 -->
+<select id="lgCatCode" resultType="String">
+	select lg_category_code from question_lg_category where lg_category_name=#{selectLgCat}
+</select>
+
+<select id="mdCatCode" resultType="String">
+	select md_category_code from question_md_category where md_category_name=#{selectMdCat}
+</select>
+
+<!-- 대분류, 중분류, 소분류 중복값 비교 쿼리 -->
+<select id="lgCatAddIdCheck" parameterType="String" resultType="String">
+	select lg_category_name from question_lg_category where lg_category_name=#{lgCatAdd}
+</select>
+
+<select id="mdCatAddIdCheck" parameterType="String" resultType="String">
+	select md_category_name from question_md_category where md_category_name=#{mdCatAdd}
+</select>
+
+<select id="smCatAddIdCheck" parameterType="String" resultType="String">
+	select sm_category_name from question_sm_category where sm_category_name=#{smCatAdd}
+</select>
+
+<!-- 정원 10.15 문제분류관리 insert 끝 -->
+
+
+<!-- 정원 10.16 문제분류관리 -->
+
+<!-- 테이블 정렬 쿼리 -->
+<select id="lgProblemCategoryList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select * from question_lg_category order by length(lg_category_code) asc, lg_category_code asc
+</select>
+
+<select id="mdProblemCategoryList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select lg_category_code, md_category_code, md_category_name 
+	from question_md_category order by length(md_category_code) asc, md_category_code asc
+</select>
+
+<select id="smProblemCategoryList" parameterType="hashmap" resultType="onet.com.vo.CategoryDto">
+	select md_category_code, sm_category_code, sm_category_name 
+	from question_sm_category order by length(sm_category_code) asc, sm_category_code asc
+</select>
+
+<!-- 정원 10.16 끝 -->
+
+<!-- 정원 10.17 시작 -->
+
+<!-- 문제분류관리 update 쿼리 -->
+<update id="lgUpdate" parameterType="onet.com.vo.CategoryDto">
+	update question_lg_category set lg_category_name = #{lg_category_name} where lg_category_code = #{lg_category_code}
+</update>
+
+<update id="mdUpdate" parameterType="onet.com.vo.CategoryDto">
+	update question_md_category set lg_category_code = #{lg_category_code}, md_category_name = #{md_category_name} where md_category_code = #{md_category_code}
+</update>
+
+<update id="smUpdate" parameterType="onet.com.vo.CategoryDto">
+	update question_sm_category set md_category_code = #{md_category_code}, sm_category_name = #{sm_category_name} where sm_category_code = #{sm_category_code}
+</update>
+
+<!-- 정원 10.17 끝 -->
+
+
+<!-- 정원 문제분류 삭제 -->
+<delete id="lgDelete" parameterType="onet.com.vo.MemberDto">
+	delete from question_lg_category where lg_category_code = #{lg_category_code}
+</delete>
+
+<delete id="mdDelete" parameterType="onet.com.vo.MemberDto">
+	delete from question_md_category where md_category_code = #{md_category_code}
+</delete>
+
+<delete id="smDelete" parameterType="onet.com.vo.MemberDto">
+	delete from question_sm_category where sm_category_code = #{sm_category_code}
+</delete>
+
+<select id="questionDeleteSearch" parameterType="String" resultType="onet.com.vo.CategoryDto">
+	select sm_category_code from question where sm_category_code=#{smDeleteCode}
+</select>
+
+<select id="questionDeleteSmSearch" parameterType="String" resultType="onet.com.vo.CategoryDto">
+	select md_category_code from question_sm_category where md_category_code = #{mdDeleteCode}
+</select>
+
+<select id="questionDeleteMdSearch" parameterType="String" resultType="onet.com.vo.CategoryDto">
+	select lg_category_code from question_md_category where lg_category_code = #{lgDeleteCode}
+</select>
+
+<select id="selectLgList" parameterType="onet.com.vo.CategoryDto" resultType="onet.com.vo.CategoryDto">
+   select lg_category_code, lg_category_name from question_lg_category where lg_category_code = #{lg_category_code}  order by length(lg_category_code) asc, lg_category_code asc
+</select>
+
+<select id="selectMdList" parameterType="onet.com.vo.CategoryDto" resultType="onet.com.vo.CategoryDto">
+	select lg_category_code, md_category_code, md_category_name from question_md_category where lg_category_code = #{lg_category_code} order by length(md_category_code) asc, md_category_code asc
+</select>
+
+<select id="selectSmList" parameterType="onet.com.vo.CategoryDto" resultType="onet.com.vo.CategoryDto">
+	select md_category_code, sm_category_code, sm_category_name from question_sm_category
+	where md_category_code = ANY(select md_category_code from question_md_category where lg_category_code = #{lg_category_code}) order by length(sm_category_code) asc, sm_category_code asc
+</select>
+
+<select id="selectMdRealList" parameterType="onet.com.vo.CategoryDto" resultType="onet.com.vo.CategoryDto">
+	select md_category_code, md_category_name from question_md_category where md_category_code = #{md_category_code} order by length(lg_category_code) asc, lg_category_code asc
+</select>
+
+<select id="selectSmRealList" parameterType="onet.com.vo.CategoryDto" resultType="onet.com.vo.CategoryDto">
+	select sm_category_code, sm_category_name from question_sm_category where md_category_code = #{md_category_code} order by length(md_category_code) asc, md_category_code asc
+</select>
+
+<select id="selectSmRealList2" parameterType="onet.com.vo.CategoryDto" resultType="onet.com.vo.CategoryDto">
+	select sm_category_code, sm_category_name from question_sm_category where sm_category_code = #{sm_category_code} order by length(sm_category_code) asc, sm_category_code asc
+</select>
+<!-- 양회준-10.26-추가수정 시작  -->
+<!-- 내시험지 리스트 뿌려주기 -->
+<select id="myExamPaperList" resultType="onet.com.vo.ExamPaperDto">
+	select * from exam_paper where exam_paper_status = true and exam_paper_enable = true order by exam_paper_num desc
+</select>
+<!-- 내 임시시헙지 리스트 뿌려주기 -->
+<select id="myTempExamList" resultType="onet.com.vo.ExamPaperDto">
+	select * from exam_paper where exam_paper_status = false order by exam_paper_num desc
+</select>
+<!-- 시험 일정 리스트 뿌려주기 -->
+<select id="examScheduleList" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info where class_name in (select class_name from member) order by exam_info_date desc
+</select>
+<!-- 양회준-10.26-추가수정 끝 -->
+<select id="checkClassNum" parameterType="String" resultType="int">
+	select class_num from class where class_name=#{class_name}
+</select>
+<select id="teacherList" resultType="onet.com.vo.MemberDto">
+	select * from member where member_id in (select member_id from member_role where role_code='ROLE_TEACHER')
+</select>
+<!-- 현이 11.02 adminMain 페이지 시작 -->
+<update id="deleteClass" parameterType="String">
+	update class 
+	set class_enable = 0 
+	where class_name = #{param1}
+</update>
+<!-- 현이 11.02 adminMain 페이지 끝 -->
+<select id="selectTotalLgList" resultType="onet.com.vo.CategoryDto">
+	select * from question_lg_category order by length(lg_category_code) asc, lg_category_code asc
+</select>
+
+<select id="selectTotalMdList" resultType="onet.com.vo.CategoryDto">
+	select * from question_md_category order by length(md_category_code) asc, md_category_code asc
+</select>
+
+<select id="selectTotalSmList" resultType="onet.com.vo.CategoryDto">
+	select * from question_sm_category order by length(sm_category_code) asc, sm_category_code asc
+</select>
+
+
+
+<!-- 민지 11.05 시험지 검색 -->
+ <select id="exampaperSearch" resultType="onet.com.vo.ExamPaperDto">
+	select ep.exam_paper_num, ep.exam_paper_name, ep.member_id, ep.exam_paper_desc, ep.exam_paper_status, m.class_name 
+	from exam_paper ep left outer join member m 
+	on (ep.member_id = m.member_id)
+	where ep.exam_paper_status=1
+	<include refid="adminexampapersearch"></include>
+	order by exam_paper_num desc
+	limit #{begin}, 5
+</select> 
+
+<!-- 민지 11.05시험일정 검색 -->
+
+<select id="examinfoSearch" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info
+	<include refid="adminexaminfosearch"></include>
+	order by exam_info_date desc
+	limit #{begin}, 5
+</select>  
+</mapper>

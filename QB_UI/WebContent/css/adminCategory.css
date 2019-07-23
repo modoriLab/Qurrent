@@ -1,0 +1,94 @@
+@charset "UTF-8";
+
+.table_heading {
+	padding: 15px;
+	background-color: #408aa5;
+	color:#FFF;
+}
+
+button.add {
+	float: right;
+	margin-bottom: 10px;
+}
+
+button.modalButton {
+	float: right;
+	right: 15px;
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+#lgCatModalPop {
+	height: 250px;
+}
+
+#mdCatModalPop, #smCatModalPop {
+	height: 300px;
+}
+
+
+#lgCatAddForm, #mdCatAddForm, #smCatAddForm {
+	margin-top: 10px;
+}
+
+.form-control{
+	width:100%;
+}
+
+.selectCategory{
+	display:inline;
+	width: 70%;
+}
+.lg_category_code{
+	text-align: center;
+	background: #f1f1f1;
+	
+}
+.md_category_code{
+	text-align: center;
+	background: #f1f1f1;
+}
+.sm_category_code{
+	text-align: center;
+	background: #f1f1f1;
+}
+td{
+	border-bottom: 1px solid #DDDDDD;
+	font-size: 1em;
+}
+
+th{
+	font-weight:bold;
+	font-size: 0.9em;
+}
+.insertHeader{
+	font-size: 1.5em;
+	text-align: center;
+	color: white;
+	font-weight: bold; 
+}
+.insertsize{
+	width:98%;
+}
+.updateHeader{
+	font-size: 1.5em;
+	text-align: center;
+	font-weight: bold;
+}
+.a{
+	display:inline;
+	text-align: right;
+}
+.thwidth1{
+	text-align:center;
+	width:60px;	
+}
+.thwidth2{
+	text-align:center;
+	width:72px;	
+}
+.thwidth3{
+	text-align:center;
+	width:64px;
+}

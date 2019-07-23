@@ -1,0 +1,126 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<head>
+  <title></title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <style type="text/css">
+   #outlook a {
+  padding: 0;
+}
+
+.ReadMsgBody {
+  width: 100%;
+}
+
+.ExternalClass {
+  width: 100%;
+}
+
+.ExternalClass * {
+  line-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+table,
+td {
+  border-collapse: collapse;
+  mso-table-lspace: 0pt;
+  mso-table-rspace: 0pt;
+}
+
+img {
+  border: 0;
+  height: auto;
+  line-height: 100%;
+  outline: none;
+  text-decoration: none;
+  -ms-interpolation-mode: bicubic;
+}
+
+
+
+@media only screen and (min-width:480px) {
+  .email-col-17 {width: 17%!important;}
+  .email-col-25 {width: 25%!important;}
+  .email-col-33 {width: 33%!important;}
+  .email-col-50 {width: 50%!important;}
+  .email-col-67 {width: 67%!important;}
+  .email-col-100 {width: 100%!important;}
+}
+
+@media only screen and (max-width:480px) {
+  img.fullwidth { max-width: 100% !important; }
+}
+
+  </style>
+<!--[if mso]>
+<xml>
+  <o:OfficeDocumentSettings>
+    <o:AllowPNG/>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+  </o:OfficeDocumentSettings>
+</xml>
+<![endif]-->
+<!--[if lte mso 11]>
+<style type="text/css">
+  .outlook-group-fix {
+    width:100% !important;
+  }
+</style>
+<![endif]-->
+
+<!--[if !mso]><!--><link href="https://fonts.googleapis.com/css?family='Do+Hyeon':400,700" rel="stylesheet" type="text/css">
+<style type="text/css">
+  @import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+</style><link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
+<style type="text/css">
+  @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
+</style><!--<![endif]-->
+
+</head>
+
+<body width="100%" bgcolor="#ffffff" style="margin: 0; mso-line-height-rule: exactly; background-color: #ffffff; ">
+
+<table cellpadding="0" cellspacing="0" style="border-bottom:3px solid #408aa5;">
+    <tr style="margin-bottom: 10px;">
+        <td style="background-color: #408aa5;">
+            <div style="width:30%; margin: 30px auto;"><h1 style="border-bottom: 4px double white; text-align: center; color: rgb(242, 242, 242);">QBQB</h1></div>
+           
+        </td>
+    </tr>
+    <tr style="font-size: 16px;">
+        <td>
+             <div style="width: 120px; margin: auto;"><br><b style="font-size: 18px;">이메일 인증</b></div>
+            <div style="margin-top:10px; margin-bottom: 30px;padding: 10px;">
+                <br>
+                    안녕하세요 <b>${firstName}</b>님,<br>저희 <b>${company}</b>를 이용해 주셔서<br> 진심으로 감사합니다.<br><br>요청하신
+                    <b style="color:#063f54">'인증 번호'</b>를 보내드립니다.<br>
+                    
+                    앞으로 더욱 발전하는 <b>${company}</b>가 되도록 하겠습니다.<br>
+                    감사합니다.
+                <br>
+            </div>
+            <div style="width:200px; border-top:1px dotted #d9d9d9;border-bottom:1px solid #d9d9d9;text-align: center; margin:auto; color: #1a1a1a; padding: 20px;">
+                    인증 번호<br><b style="color:#063f54; font-size: 20px;">${randomNum}</b>
+                </div>
+            <div style="margin-top:30px; margin-bottom: 10px; padding: 10px;">
+            인증번호를 입력하신 후 회원가입을 완료해주세요
+            </div>
+        </td>
+    </tr>
+</table>
+
+</body>
+
+</html>
+

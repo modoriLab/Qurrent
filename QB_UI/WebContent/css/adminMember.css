@@ -1,0 +1,39 @@
+/* 양회준 */
+.dataTables_filter{
+	display:none;
+}
+/****민지****/
+.adminMemberSelect{
+	display:inline-block;
+	height: 35px;
+	width: 150px;
+	}
+	
+	
+/* 현이 */
+.searchControl {
+	display: inline-block;
+	width: 20%;
+}
+
+.searchRowDiv {
+	text-align: center;
+	margin-bottom: 10px;
+    margin-top: -10px;
+    margin-left:0;
+    margin-right:0;
+}
+
+#memberSearchBtn{
+	width: 15%;
+	margin-bottom: 5px;
+}
+
+#adminMemberBtnDiv {
+	margin-top: 20px;
+	text-align: center;
+}
+
+#adminMemberBtnDiv button {
+	margin-right: 5px;
+}

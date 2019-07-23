@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="onet.com.common.dao.CommonDao">
+<!-- 한결 10월 12일 공지사항 및 시험일정(강사 학생 메인페이지) 시작 -->
+<select id="member" parameterType="String" resultType="onet.com.vo.MemberDto">
+    select member_id, member_name, class_name from member where member_id = #{member_id}
+</select>
+<select id="notice" parameterType="String" resultType="onet.com.vo.NoticeDto">
+    select notice.notice_num, notice.class_name, notice.member_id, member.member_name, notice.notice_name, notice.notice_content, notice.notice_file1, notice.notice_file2, notice.notice_date from notice inner join member on notice.member_id=member.member_id where notice.class_name = (select class_name from member where member_id = #{member_id});
+</select>
+<select id="exam_info" parameterType="String" resultType="onet.com.vo.Exam_infoDto">
+   select * from exam_info where class_name = (select class_name from member where member_id = #{member_id});
+</select>
+<!-- 한결 10월 12일 공지사항 및 시험일정(강사 학생 메인페이지) 끝 -->
+
+<!-- 민지 10.19 관리자 공지사하 및 시험일정시작 -->
+<select id="adminnotice" parameterType="onet.com.vo.NoticeDto" resultType="onet.com.vo.NoticeDto">
+	select notice.notice_num, notice.class_name, notice.member_id, member.member_name, notice.notice_name, notice.notice_content, notice.notice_file1, notice.notice_file2, notice.notice_date from notice inner join member on notice.member_id=member.member_id where notice.class_name  = #{class_name}
+</select>
+<select id="adminexam_info" parameterType="onet.com.vo.ExamInfoDto" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info where class_name = #{class_name}
+</select>
+<!-- 민지 10.19 관리자 공지사하 및 시험일정 끝 -->
+
+<!-- 한결 10월 12일 공지사항 및 시험일정(강사 학생 메인페이지) 끝 -->
+
+
+<!-- 현이 10.15 examScheduleDetail 페이지 select 시작 -->
+<select id="examScheduleDetail" parameterType="int" resultType="onet.com.vo.ExamInfoDto">
+	select exam_info_num, exam_paper_num, class_name, exam_info_name, exam_info_desc, exam_info_member, 
+	exam_info_date, exam_info_start, exam_info_end, exam_info_time 
+	from exam_info where exam_info_num = #{exam_info_num}
+</select>
+<!-- 현이 10.15 examScheduleDetail 페이지 select 끝 -->
+
+
+<!-- 양회준 10.15 내 정보 수정 시작 -->
+<select id="myPageInfo" resultType="onet.com.vo.MemberDto">
+	select * from member where member_id = #{member_id}
+</select>
+
+<update id="myPageUpdate" parameterType="onet.com.vo.MemberDto">
+ 	UPDATE member 
+	SET 
+	member_pwd=#{member_pwd},
+	member_name=#{member_name},
+	member_email=#{member_email},	
+	member_phone=#{member_phone}
+	where member_id=#{member_id}
+</update>
+
+<update id="myPageDrop" parameterType="onet.com.vo.MemberDto">
+ 	UPDATE member 
+	SET 
+	member_enable=#{member_enable}
+	where member_id=#{member_id}
+</update>
+
+<!-- 양회준 10.15 내 정보 수정 끝 -->
+
+
+<select id="memberDrop" resultType="String">
+	select member_pwd from member where member_id = #{param1}
+</select>
+
+<!-- 현이 - ExamPaperDo 10.18 시작 -->
+<select id="examPaperDoQuestion" parameterType="int" resultType="onet.com.vo.ExamPaperDoQuestionDto"><!-- 문제 정보 가져오기 -->
+	select q.question_num, q.question_type, q.question_name, q.question_img, q.question_answer, 
+	eq.exam_question_seq, eq.exam_question_score 
+	from question q join exam_question eq
+	on (q.question_num = eq.question_num)
+	where eq.exam_paper_num = 
+	(select exam_paper_num from exam_info where exam_info_num = #{exam_info_num})
+	order by eq.exam_question_seq
+</select>
+
+<select id="examPaperDoQuestion_choice" parameterType="int" resultType="onet.com.vo.Question_choiceDto"><!-- 문제 보기 가져오기 -->
+	select question_num, question_choice_num, question_choice_content, question_choice_image 
+	from question_choice
+	where question_num in 	
+	(select q.question_num
+	from question q join exam_question eq
+	on (q.question_num = eq.question_num)
+	where eq.exam_paper_num = 
+	(select exam_paper_num from exam_info 
+	where exam_info_num = #{exam_info_num})
+	)
+	order by question_num, question_choice_num
+</select>
+
+<select id="questionCount" parameterType="int" resultType="int"><!-- 한 시험지에 담긴 문제의 개수 -->
+	select count(*) as questionCount
+	from exam_question
+	where exam_paper_num = (select exam_paper_num from exam_info where exam_info_num = #{exam_info_num})
+</select>
+<!-- 현이 - ExamPaperDo 10.18 끝 -->
+
+
+<!-- 재훈 - 문제관리 관련 10.21 시작 -->
+<select id="singleQuestionDeleteSearch" parameterType="int" resultType="onet.com.vo.ExamQuestionDto">
+	select * from exam_question where question_num = #{question_num}
+</select>
+<delete id="singleQuestionDelete" parameterType="onet.com.vo.QuestionDto">
+	delete from question where question_num = #{question_num}
+</delete>
+<delete id="singleQuestionChoiceDelete" parameterType="onet.com.vo.Question_choiceDto">
+	delete from question_choice where question_num = #{question_num}
+</delete>
+<select id="questionInfo" parameterType="int" resultType="onet.com.vo.QuestionDto">
+	select * from question where question_num = ${question_num}
+</select>
+<select id="questionChoiceInfo" parameterType="int" resultType="onet.com.vo.Question_choiceDto">
+	select * from question_choice where question_num = ${question_num}
+</select>
+<select id="questionCategoryInfo" resultType="onet.com.vo.CategoryDto">
+select * from question qs join question_sm_category sm on (qs.sm_category_code = sm.sm_category_code) 
+   join question_md_category md on (sm.md_category_code = md.md_category_code) 
+   join question_lg_category lg on (lg.lg_category_code = md.lg_category_code)
+   where question_num=#{param1}
+</select>
+
+<!-- 재훈 - 문제관리 관련 10.21 끝 -->
+<insert id="insertBoardList" parameterType="onet.com.vo.NoticeDto">
+	insert into notice values (#{notice_num},#{class_name},#{notice_name},#{member_id},#{notice_content},#{notice_file1},#{notice_file2},#{notice_date})
+</insert>
+
+<select id="noticeDetail" parameterType="onet.com.vo.NoticeDto" resultType="onet.com.vo.NoticeDto">
+	select notice.notice_num, notice.class_name, notice.member_id, member.member_name, notice.notice_name, notice.notice_content, notice.notice_file1, notice.notice_file2, notice.notice_date from notice inner join member on notice.member_id=member.member_id where notice.class_name = #{class_name} and notice.notice_num=#{notice_num}
+</select>
+
+<select id="noticeNumFind" parameterType="onet.com.vo.NoticeDto" resultType="String">
+	select max(notice_num) from notice where class_name=#{class_name} order by notice_num desc;
+</select>
+
+
+<select id="noticeNullCheck" parameterType="String" resultType="onet.com.vo.MemberDto">
+	select * from member where member_id=#{member_id}
+</select>
+
+<select id="comment" parameterType="onet.com.vo.CommentDto" resultType="onet.com.vo.CommentDto">
+	select comment.comment_num, comment.comment_group, comment.class_name, member.member_name, comment.notice_num, comment.member_id, comment.comment_content, comment.comment_date from comment inner join member on comment.member_id=member.member_id where comment.class_name=#{class_name} and notice_num=#{notice_num}
+</select>
+
+<select id="commentGroup" parameterType="onet.com.vo.CommentDto" resultType="onet.com.vo.CommentDto">
+	select comment.comment_num, comment.comment_group, comment.class_name, member.member_name, comment.notice_num, comment.member_id, comment.comment_content, comment.comment_date from comment inner join member on comment.member_id=member.member_id where comment.class_name=#{class_name} and comment.notice_num=#{notice_num} and comment.comment_group != 0
+</select>
+
+<insert id="commentReply" parameterType="onet.com.vo.CommentDto">
+	insert into comment(comment_group,class_name,notice_num,member_id,comment_content) values(#{comment_num},#{class_name},#{notice_num},#{member_id},#{comment_content})
+</insert>
+
+<insert id="commentInsert" parameterType="onet.com.vo.CommentDto">
+	insert into comment(class_name,notice_num,member_id,comment_content) values(#{class_name},#{notice_num},#{member_id},#{comment_content})
+</insert>
+
+<update id="commentUpdate" parameterType="onet.com.vo.CommentDto">
+	update comment set comment_content = #{comment_content} where comment_num=#{comment_num}
+</update>
+
+<delete id="commentReplyDelete" parameterType="onet.com.vo.CommentDto">
+	delete from comment where comment_num=#{comment_num}
+</delete>
+
+<select id="noticeUpdateList" parameterType="onet.com.vo.NoticeDto" resultType="onet.com.vo.NoticeDto">
+	select * from notice where notice_num=#{notice_num} and class_name=#{class_name}
+</select>
+
+<update id="updateBoardList" parameterType="onet.com.vo.NoticeDto">
+	update notice set notice_name = #{notice_name},notice_content=#{notice_content},notice_file1=#{notice_file1},notice_file2=#{notice_file2} where notice_num=#{notice_num} and class_name=#{class_name}
+</update>
+
+<delete id="noticeDelete" parameterType="onet.com.vo.NoticeDto">
+	delete from notice where notice_num=#{notice_num} and class_name=#{class_name}
+</delete>
+
+<delete id="noticeFromCommentDelete" parameterType="onet.com.vo.NoticeDto">
+	delete from comment where notice_num=#{notice_num} and class_name=#{class_name}
+</delete>
+
+<!-- 양회준 10-24 관리자, 강사-학생&성적관리 페이지 -->
+<select id="adminStudentInfo" parameterType="String" resultType="onet.com.vo.MemberDto">
+	select m.member_id, m.member_email, m.member_name, m.member_phone, m.class_name, mr.role_code
+	from member m join member_role mr join class c
+	on m.member_id=mr.member_id and m.class_name=c.class_name
+	where not m.member_enable=0 
+	and mr.role_code='ROLE_STUDENT' and c.class_num = #{class_num}
+	order by m.member_name asc
+</select>
+<select id="studentInfo" parameterType="String" resultType="onet.com.vo.MemberDto">
+	select m.member_id, m.member_email, m.member_name, m.member_phone, m.class_name, mr.role_code
+	from member m join member_role mr on m.member_id=mr.member_id
+	where not m.member_id=#{member_id} and not m.member_enable=0 
+	and mr.role_code='ROLE_STUDENT' and m.class_name = 
+	(select class_name from member where member_id=#{member_id})
+	order by m.member_name asc
+</select>
+
+<!-- 학생 차트 정보 -->
+<select id="studentChartInfo" parameterType="String" resultType="onet.com.vo.Score_chartDto">
+	<![CDATA[
+	select sc.member_id, m.member_id, sc.exam_info_num, ei.exam_info_name, sc.score_chart_score, 
+	sc.score_chart_rank, cc.class_chart_avg
+	from score_chart sc join class_chart cc join exam_info ei join member m
+	on sc.exam_info_num = cc.exam_info_num and sc.exam_info_num=ei.exam_info_num and sc.member_id=m.member_id
+	where sc.member_id=#{member_id} and sc.class_name=(select class_name from member where member_id=#{member_id})
+	and (ei.exam_info_date < date_add(sysdate(), interval -1 day)) and not sc.score_chart_rank=0
+	order by m.member_name, sc.exam_info_num asc
+	]]>
+</select>
+<!-- 클래스 차트 정보 -->
+<select id="classChartInfo" parameterType="String" resultType="onet.com.vo.Class_chartDto">
+	<![CDATA[
+	select c.class_name, c.exam_info_num, c.class_chart_avg, ei.exam_info_name 
+	from class_chart c join exam_info ei
+	on c.exam_info_num=ei.exam_info_num
+	where c.class_name=#{class_name}
+	and (ei.exam_info_date < date_add(sysdate(), interval -1 day))
+	order by exam_info_num asc
+	]]>
+</select>
+
+<!-- 양회준 10-25 학생&성적관리 학생개인 성적확인 -->
+<select id="studentExamScoreInfo" parameterType="String" resultType="onet.com.vo.StudentExamScoreInfo">
+	<![CDATA[
+	SELECT DISTINCT sc.exam_info_num, sc.score_chart_comment, ei.exam_info_name, ei.exam_info_date, ei.exam_info_start, 
+	ei.exam_info_end, ei.exam_info_time, ep.exam_paper_desc, m.member_name
+	FROM score_chart sc JOIN exam_info ei JOIN exam_paper ep JOIN member m
+	ON sc.exam_info_num=ei.exam_info_num and ei.exam_paper_num = ep.exam_paper_num and sc.member_id=m.member_id
+	WHERE m.member_id = #{param1} and ei.class_name = #{param2} and (ei.exam_info_date < date_add(sysdate(), interval -1 day))
+	order by exam_info_num desc
+	]]>
+</select>
+
+<select id="studentExamScoreInfoCtgr" parameterType="String" resultType="onet.com.vo.StudentExamScoreInfo">
+	<![CDATA[
+	SELECT DISTINCT sa.exam_info_num, q.sm_category_code, qsc.sm_category_name
+	FROM member m JOIN student_answer sa JOIN exam_info ei JOIN exam_paper ep JOIN exam_question eq JOIN question q JOIN question_sm_category qsc
+	ON m.member_id=sa.member_id and sa.exam_info_num=ei.exam_info_num and ei.exam_paper_num= eq.exam_paper_num 
+	and eq.question_num = q.question_num and q.sm_category_code = qsc.sm_category_code
+	WHERE m.member_id = #{param1} and ei.class_name = #{param2}
+	and (ei.exam_info_date < date_add(sysdate(), interval -1 day))
+	order by sa.exam_info_num, qsc.sm_category_code asc
+	]]>
+</select>
+<!-- 양회준 10-29 학생&성적관리 클래스통계 학생별 성적표 -->
+<select id="studentExamScoreList" parameterType="String" resultType="onet.com.vo.Score_chartDto">
+	<![CDATA[
+	select m.member_id, m.member_name, ei.exam_info_num, ei.exam_info_name, sc.score_chart_score, sc.class_name 
+	from score_chart sc join member m join exam_info ei
+	on sc.member_id=m.member_id and sc.exam_info_num = ei.exam_info_num
+	where sc.class_name = #{class_name}
+	and (ei.exam_info_date < date_add(sysdate(), interval -1 day))
+	order by m.member_name, sc.exam_info_num asc
+	]]>
+</select>
+
+<select id="studentExamScoreAvg" parameterType="String" resultType="onet.com.vo.Score_chartDto">
+	<![CDATA[
+	select sc.member_id, m.member_name, round(avg(sc.score_chart_score), 1) as "avg_score"
+	from score_chart sc join member m join exam_info ei
+	on sc.member_id = m.member_id and sc.exam_info_num = ei.exam_info_num
+	where  sc.class_name = #{class_name}
+	and (ei.exam_info_date < date_add(sysdate(), interval -1 day))
+	group by sc.member_id
+	order by m.member_name, sc.exam_info_num asc
+	]]>
+</select>
+
+<!-- 양회준 11-8 학생&성적관리 클래스통계 표준편차 -->
+<select id="classExamSTD" parameterType="String" resultType="double">
+	<![CDATA[
+	select std(score_chart_score) as std
+	from score_chart sc join exam_info ei
+	on sc.exam_info_num = ei.exam_info_num
+	where sc.class_name= #{class_name} 
+	and (ei.exam_info_date < date_add(sysdate(), interval -1 day))
+	group by sc.exam_info_num
+	order by sc.exam_info_num asc
+	]]>
+</select>
+
+<!-- 영준 10.25 - 반 등수 추가 시작 -->
+<select id="classRank" parameterType="String" resultType="onet.com.vo.Score_chartDto">
+	SELECT m.member_name, score_chart_rank
+	FROM score_chart as sc, exam_info e, member m
+	WHERE sc.exam_info_num=e.exam_info_num
+	and m.member_id=sc.member_id
+	and e.exam_info_num=#{exam_info_num}
+	ORDER BY
+	sc.score_chart_score DESC
+</select>
+<!-- 영준 10.25 - 반 등수 추가 끝 -->
+<!-- 민지 10.26 쪽지페이지 -학생 리스트 -->
+<select id="classMemeberList" parameterType="String" resultType="onet.com.vo.MemberDto">
+select * from member where class_name=(select class_name from member where member_id = #{member_id}) and member_id != #{member_id}
+</select>
+
+
+<select id="studentScoreSpread" resultType="int">
+	select count(*)
+	from score_chart sc join exam_info ei
+	on sc.exam_info_num=ei.exam_info_num
+	where (sc.score_chart_score between ${param3} and ${param4}) and sc.class_name=#{param2} and ei.exam_info_num=#{param1}
+</select>
+<!-- 양회준 11.9 학생.성적관리.도넛차트 -->
+<select id="studentExamScRatio" resultType="onet.com.vo.ChartCategory">
+<![CDATA[
+	select qsc.sm_category_name as category, count(qsc.sm_category_name) as count
+	from student_answer sa join question q join question_sm_category qsc join question_md_category qmc join member m join exam_info ei
+	on sa.question_num=q.question_num and q.sm_category_code=qsc.sm_category_code 
+	and qsc.md_category_code = qmc.md_category_code and sa.member_id=m.member_id and sa.exam_info_num=ei.exam_info_num
+	where sa.member_id=#{member_id} and m.class_name=#{class_name} and ei.exam_info_date<sysdate()
+	group by qsc.sm_category_name
+]]>
+</select>
+<!-- 양회준 11.11 학생.성적관리.도넛차트 -->
+<select id="studentExamMdRatio" resultType="onet.com.vo.ChartCategory">
+<![CDATA[
+	select qmc.md_category_name as category, count(qmc.md_category_name) as count
+	from student_answer sa join question q join question_sm_category qsc join question_md_category qmc join member m join exam_info ei
+	on sa.question_num=q.question_num and q.sm_category_code=qsc.sm_category_code 
+	and qsc.md_category_code = qmc.md_category_code and sa.member_id=m.member_id and sa.exam_info_num=ei.exam_info_num
+	where sa.member_id=#{member_id} and m.class_name=#{class_name} and ei.exam_info_date<sysdate()
+	group by qmc.md_category_name
+]]>
+</select>
+
+
+
+<select id="count_receive_note" parameterType="String" resultType="String">
+	select count(*) from message where receive_member_id=#{member_id}
+</select>
+
+<select id="classTeacherList" parameterType="String" resultType="onet.com.vo.MemberDto">
+ select member_id, member_name from member where member_id=(
+ select member_id from member_role where member_id in(
+ select member_id from member where class_name in (select class_name from member where member_id=#{member_id}) and role_code="role_teacher"))
+</select>
+
+<update id="updateBoardListFile1" parameterType="onet.com.vo.NoticeDto">
+	update notice set notice_name = #{notice_name},notice_content=#{notice_content},notice_file1=#{notice_file1} where notice_num=#{notice_num} and class_name=#{class_name}
+</update>
+
+
+<!-- 쪽지 리스트 -->
+<select id="receiveMessage" parameterType="String" resultType="onet.com.vo.MessageDto">
+   select ms.message_num, ms.send_member_id, ms.receive_member_id, ms.message_content, ms.message_date, 
+   ms.message_check, ms.send_check, ms.receive_check, m.member_name from message ms inner join member m on 
+   ms.receive_member_id = m.member_id where receive_member_id=#{member_id} and receive_check=0
+</select>
+
+<select id="sendMessage" parameterType="String" resultType="onet.com.vo.MessageDto">
+    select ms.message_num, ms.send_member_id, ms.receive_member_id, ms.message_content, ms.message_date, 
+   ms.message_check, ms.send_check, ms.receive_check, m.member_name from message ms inner join member m on 
+   ms.send_member_id = m.member_id where send_member_id=#{member_id} and send_check=0
+</select>
+
+<update id="updateBoardListFile2" parameterType="onet.com.vo.NoticeDto">
+	update notice set notice_name = #{notice_name},notice_content=#{notice_content},notice_file2=#{notice_file2} where notice_num=#{notice_num} and class_name=#{class_name}
+</update>
+
+<update id="updateNoBoardList" parameterType="onet.com.vo.NoticeDto">
+	update notice set notice_name = #{notice_name},notice_content=#{notice_content} where notice_num=#{notice_num} and class_name=#{class_name}
+</update>
+
+
+<update id="fileDeletebtn1" parameterType="onet.com.vo.NoticeDto">
+	update notice set notice_file1=#{notice_file1} where notice_num=#{notice_num} and class_name=#{class_name}
+</update>
+
+<update id="fileDeletebtn2" parameterType="onet.com.vo.NoticeDto">
+	update notice set notice_file2=#{notice_file2} where notice_num=#{notice_num} and class_name=#{class_name}
+</update>
+
+<update id="sendMessageDelete" parameterType="int">
+	update message set receive_check=1, message_check=1 where message_num=#{message_num} 
+</update>
+
+<update id="receiveMessageDelete" parameterType="int">
+	update message set send_check=1 where message_num=#{message_num}
+</update>
+
+<update id="message_check" parameterType="int">
+	 update message set message_check=#{message_check} where message_num=#{message_num}
+</update>
+
+<select id="MessageDeleteCheck" parameterType="int" resultType="onet.com.vo.MessageDto">
+	select send_check, receive_check from message where message_num=#{message_num}
+</select>
+
+<delete id="messageRealDelete" parameterType="int">
+	delete from message where message_num=#{message_num}
+</delete>
+
+<select id="nameSearch" parameterType="String" resultType="String">
+	select member_name from member where member_id=#{sendManId}
+</select>
+
+<select id="nameSearch2" parameterType="String" resultType="String">
+	select member_name from member where member_id=#{receiveManId}
+</select>
+
+<select id="classNum" parameterType="String" resultType="String">
+	select class_num from class where class_name=(select class_name from member where member_id=#{member_id})
+</select>
+
+<select id="receiveMessageCheck" parameterType="String" resultType="int">
+	select count(*) from message where receive_member_id=#{member_id} and receive_check = 0
+</select>
+
+<select id="sendMessageCheck" parameterType="String" resultType="int">
+	select count(*) from message where send_member_id=#{member_id} and send_check = 0
+</select>
+
+
+</mapper>

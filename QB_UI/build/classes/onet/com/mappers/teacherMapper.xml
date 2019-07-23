@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="onet.com.teacher.dao.TeacherDao">
+
+<!-- 태용  -->
+<sql id="search">
+<where>
+   <if test="param1 !=''">
+      lg.lg_category_code = #{param1}
+      <if test="param2 != ''">
+         and md.md_category_code = #{param2}
+         <if test="param3 != ''">
+            and sm.sm_category_code = #{param3}
+            <if test = "param6 != ''">
+               and (qs.question_type like concat('%',#{param6},'%') 
+               or qs.question_name like concat('%',#{param6},'%') 
+               or qs.member_id like concat('%',#{param6},'%') 
+               or lv.level_name like concat('%',#{param6},'%'))
+            </if>
+         </if>
+         <if test="param3 =='' and param6 !=''">
+            and (qs.question_type like concat('%',#{param6},'%') 
+               or qs.question_name like concat('%',#{param6},'%') 
+               or qs.member_id like concat('%',#{param6},'%') 
+               or lv.level_name like concat('%',#{param6},'%')
+               or sm.sm_category_code = #{param3})
+         </if>
+      </if>
+      <if test="param2 =='' and param6 !=''">
+         and (qs.question_type like concat('%',#{param6},'%') 
+               or qs.question_name like concat('%',#{param6},'%') 
+               or qs.member_id like concat('%',#{param6},'%') 
+               or lv.level_name like concat('%',#{param6},'%')
+               or sm.sm_category_code = #{param3}
+               or md.md_category_code = #{param2})
+      </if>
+   </if>
+   <if test="param4 !=''">
+      and lv.level_code=#{param4}
+   </if>
+   <if test="param5 !=''">
+      and qs.question_type=#{param5}
+   </if>
+    <if test="param1 == '' and param6 != ''">
+      and qs.question_type like concat('%',#{param6},'%') 
+            or qs.question_name like concat('%',#{param6},'%') 
+            or qs.member_id like concat('%',#{param6},'%') 
+            or lv.level_name like concat('%',#{param6},'%') 
+            or sm.sm_category_name like concat('%',#{param6},'%') 
+            or md.md_category_name like concat('%',#{param6},'%') 
+            or lg.lg_category_name like concat('%',#{param6},'%')
+   </if>
+</where>
+</sql>
+
+<!-- 시험지만들기 문제 검색 -->
+<select id="questionSearch" resultType="onet.com.vo.QuestionDto">
+	select * from question qs join question_sm_category sm on (qs.sm_category_code = sm.sm_category_code) 
+	join question_md_category md on (sm.md_category_code = md.md_category_code) 
+	join question_lg_category lg on (lg.lg_category_code = md.lg_category_code)
+	join question_level lv on (qs.level_code = lv.level_code)
+	<include refid="search"></include>
+	order by question_num;
+</select>
+
+<!-- 내시험지 리스트 뿌려주기 -->
+<select id="myExamPaperList" resultType="onet.com.vo.ExamPaperDto">
+	select * from exam_paper where member_id = #{param1} and exam_paper_status = true and exam_paper_enable = true order by exam_paper_num desc
+</select>
+<!-- 내 임시시헙지 리스트 뿌려주기 -->
+<!-- <select id="myTempExamList" resultType="onet.com.vo.ExamPaperDto" parameterType="String">
+	select * from exam_paper where member_id = #{param1} and exam_paper_status = false order by exam_paper_num desc
+</select> -->
+
+<!-- 시험 일정 리스트 뿌려주기 -->
+<select id="examScheduleList" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info where class_name = (select class_name from member where member_id = #{member_id}) order by exam_info_date desc
+</select>
+
+
+<select id="examScheduleList2" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info where exam_paper_num = #{exam_paper_num}
+</select>
+
+
+
+
+<!-- 시험지 삭제 -->
+<delete id="deleteExam">
+	delete from exam_paper where exam_paper_num = #{param1}
+</delete>
+<!-- 내시험지 삭제 -->
+
+<!-- 시험지 enable false값으로 update -->
+<update id="updateExam" parameterType="onet.com.vo.ExamPaperDto">
+	update exam_paper set exam_paper_enable=false where exam_paper_num = #{exam_paper_num}
+</update>
+
+<select id="updateExamView" resultType="onet.com.vo.ExamPaperUpdateDto">
+	select q.question_num, q.question_name, q.question_img, q.question_answer, q.question_correct_ratio, eq.exam_question_score, eq.exam_question_seq, ql.level_name, md.md_category_name, sm.sm_category_name, q.member_id 
+	from exam_paper ep join exam_question eq on(ep.exam_paper_num = eq.exam_paper_num) 
+	join question q on(eq.question_num = q.question_num) 
+	join question_sm_category sm on(q.sm_category_code = sm.sm_category_code)
+	join question_md_category md on(sm.md_category_code = md.md_category_code) 
+	join question_level ql on(q.level_code = ql.level_code)
+	where eq.exam_paper_num =#{param1} order by eq.exam_question_seq asc
+</select>
+
+<select id="checkExamInfo" resultType="int">
+	select count(*) from exam_info where exam_paper_num = #{param1}
+</select>
+
+<select id="checkDate" resultType="int">
+<![CDATA[
+	select count(*) from exam_info where exam_paper_num = #{param1} and exam_info_date > now()
+]]>
+</select>
+
+<delete id="examquestionsdelete">
+	delete from exam_question where exam_paper_num = #{param1}
+</delete>
+<update id="examNameUpdate">
+	update exam_paper set exam_paper_name=#{param2}, exam_paper_desc=#{param3} where exam_paper_num = #{param1}
+</update>
+<insert id="examquestionsinsert">
+	insert into exam_question(exam_paper_num, question_num, exam_question_seq, exam_question_score) values(#{param1},#{param2},#{param3},#{param4})
+</insert>
+
+<select id="examNameDesc" resultType="onet.com.vo.ExamPaperDto">
+	select exam_paper_name, exam_paper_desc from exam_paper where exam_paper_num = #{param1}
+</select>
+
+<insert id="newExaminsert" parameterType="onet.com.vo.ExamPaperDto" useGeneratedKeys="true" keyProperty="exam_paper_num" keyColumn="exam_paper_num">
+	insert into exam_paper (exam_paper_name, member_id, exam_paper_desc, exam_paper_status, exam_paper_enable) values(#{exam_paper_name}, #{member_id}, #{exam_paper_desc}, 1, 1);
+	
+	<selectKey keyProperty="exam_paper_num" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID();
+    </selectKey>
+</insert>
+
+<select id="examQuestionList" resultType="onet.com.vo.ExamQuestionListDto">
+	select e.exam_paper_num, q.question_num, e.exam_question_seq, e.exam_question_score, q.question_type, q.question_name, q.question_img, ep.exam_paper_name from exam_question e join question q on (e.question_num = q.question_num) join exam_paper ep on (e.exam_paper_num = ep.exam_paper_num) where e.exam_paper_num = #{param1} order by exam_question_seq asc
+</select>
+
+<!-- 태용 끝 -->
+
+<!-- 민지 시작 -->
+<select id="classMemberList" resultType="onet.com.vo.MemberDto">
+	select member_id, member_name from member where member_id!=#{param2} and class_name = (select class_name from member where member_id = (select member_id from exam_paper where exam_paper_num = #{param1}));
+</select>
+<select id="classMemberListUpdate" resultType="onet.com.vo.MemberDto">
+select member_id, member_name from member where class_name=(select class_name from exam_info where exam_info_num = #{exam_info_num});
+</select>
+
+<select id="classInfo" resultType="onet.com.vo.ClassDto">
+	select class_num,class_name from class where class_name = (select class_name from member where member_id = (select member_id from exam_paper where exam_paper_num = #{param1}));
+</select>
+<!-- 민지끝  -->
+
+<!-- 한결 : 강사 문제 리스트 불러오기 시작-->
+<select id="question" parameterType="hashmap" resultType="onet.com.vo.QuestionDto">
+	select question_num, question_type,question_name, question_img,question_answer,question_correct_ratio,question_select_count, sm_category_code,
+	(select md_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code)) as 'md_category_code',
+	(select lg_category_code from question_lg_category where lg_category_code = (select lg_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code))) as 'lg_category_code',
+   (select sm_category_name from question_sm_category where sm_category_code = question.sm_category_code) as 'sm_category_name',
+   (select md_category_name from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code)) as 'md_category_name',
+   (select lg_category_name from question_lg_category where lg_category_code = (select lg_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code))) as 'lg_category_name',
+   (select level_name from question_level where level_code = question.level_code) as 'level_name',
+   member_id
+   from question
+</select>
+<select id="question_choice" parameterType="hashmap" resultType="onet.com.vo.Question_choiceDto">
+	select * from question_choice
+</select>
+<select id="question_level" parameterType="hashmap" resultType="onet.com.vo.Question_levelDto">
+	select * from question_level
+</select>
+<!-- 한결 : 강사 문제 리스트 불러오기 끝-->
+
+<!-- ################ 재훈 시작 #################  -->
+<!-- 강사 내가만든문제 리스트 -->
+<select id="teacherMyQuestion" parameterType="hashmap" resultType="onet.com.vo.QuestionDto">
+	select question_num, question_type,question_name, question_img,question_answer,question_correct_ratio,question_select_count, sm_category_code,
+	(select md_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code)) as 'md_category_code',
+	(select lg_category_code from question_lg_category where lg_category_code = (select lg_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code))) as 'lg_category_code',
+   (select sm_category_name from question_sm_category where sm_category_code = question.sm_category_code) as 'sm_category_name',
+   (select md_category_name from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code)) as 'md_category_name',
+   (select lg_category_name from question_lg_category where lg_category_code = (select lg_category_code from question_md_category where md_category_code = (select md_category_code from question_sm_category where sm_category_code = question.sm_category_code))) as 'lg_category_name',
+   (select level_name from question_level where level_code = question.level_code) as 'level_name',
+   member_id
+   from question where member_id=#{param1} order by question_num desc;
+</select>
+<!-- 강사 내가만든문제 조건&키워드별 검색 -->
+<select id="teacherMyQuestionSearch" resultType="onet.com.vo.QuestionDto">
+	select * from question qs join question_sm_category sm on (qs.sm_category_code = sm.sm_category_code) 
+	join question_md_category md on (sm.md_category_code = md.md_category_code) 
+	join question_lg_category lg on (lg.lg_category_code = md.lg_category_code)
+	join question_level lv on (qs.level_code = lv.level_code)
+	<include refid="search"></include> and qs.member_id=#{param7}
+	order by question_num desc;
+</select>
+<!-- ################ 재훈 끝 #################  -->
+
+
+<!-- 영준 10.16 내 시험지 리스트 불러오기 시작 -->
+<select id="examPaperList" parameterType="onet.com.vo.ExamPaperDto" resultType="onet.com.vo.ExamPaperDto">
+
+	select * from exam_paper 
+	where member_id = (select member_id from member_role where member_id in 
+	(select m.member_id from member m, class c where  c.class_num=#{class_num} and c.class_name=m.class_name) and role_code='role_teacher');
+
+</select>
+<!-- 영준 10.16 내 시험지 끝 -->
+
+
+<!-- 민지-10.18 시험등록 -->
+<insert id="examInfoInsert" parameterType="onet.com.vo.ExamInfoDto">
+ INSERT INTO exam_info(exam_paper_num, class_name, exam_info_name,exam_info_desc,exam_info_member,exam_info_date,exam_info_start,exam_info_end,exam_info_time)
+        VALUES(#{exam_paper_num},#{class_name},#{exam_info_name},#{exam_info_desc},#{exam_info_member},#{exam_info_date},#{exam_info_start},#{exam_info_end},#{exam_info_time})     
+</insert>
+
+<insert id="examMemberInsert" parameterType="onet.com.vo.ExamMemberDto">
+INSERT INTO exam_member values(#{exam_info_num},#{member_id})
+</insert>
+<!-- 민지 10.18 시험등록 끝 -->
+
+<!-- 한결 10.17 
+시험지 생성 및 임시저장 확인용 시작-->
+<!-- <select id="examPaperCheck" parameterType="String" resultType="String">
+	select exam_paper_num from exam_paper where exam_paper_name = #{param1} and member_id = #{param2}
+</select> -->
+<!-- 시험지 테이블에 insert and update -->
+<insert id="examPaperInsert" parameterType="onet.com.vo.ExamPaperDto">
+	insert into exam_paper(exam_paper_name, member_id, exam_paper_desc, exam_paper_status) 
+	values(#{exam_paper_name}, #{member_id}, #{exam_paper_desc}, #{exam_paper_status})
+	
+	<selectKey keyProperty="exam_paper_num" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey> 
+</insert> 
+<update id="examPaperUpdate">
+	update  exam_paper set exam_paper_name=#{param2},member_id=#{param3},exam_paper_desc=#{param4},exam_paper_status=#{param5} where exam_paper_num = #{param1}
+</update>
+<!-- 시험지 문제 테이블에 select insert update delete -->
+<insert id="examQuestionInsert">
+	insert into exam_question(exam_paper_num,question_num, exam_question_seq, exam_question_score) values(#{param1}, #{param2}, #{param3}, #{param4})
+</insert>
+<delete id="examQuestionDelete" parameterType="String">
+	delete from exam_question where exam_paper_num=#{param1}
+</delete>
+
+<!-- 한결 10.17 끝-->
+
+<!-- 영준 10.18 시험 일정 삭제 시작 -->
+<delete id="teacherExamSchedultDelete" parameterType="onet.com.vo.ExamInfoDto">
+	DELETE FROM exam_info WHERE exam_info_num=#{exam_info_num}
+</delete>
+
+<!-- 민지 10.22 시험일정 수정 시작 -->
+<select id="classExamList" parameterType="onet.com.vo.ExamInfoDto" resultType="onet.com.vo.ExamInfoDto">
+select * from exam_info where exam_info_num=#{exam_info_num}
+
+</select>
+
+<update id="examInfoIUpdate" parameterType="onet.com.vo.ExamInfoDto">
+	update exam_info set exam_info_desc=#{exam_info_desc}, exam_info_member=#{exam_info_member}, exam_info_date=#{exam_info_date}, exam_info_start=#{exam_info_start},exam_info_end=#{exam_info_end}, exam_info_time=#{exam_info_time} where exam_info_num = #{exam_info_num}
+</update>
+
+<select id="classExamMemberList" parameterType="onet.com.vo.ExamMemberDto" resultType="onet.com.vo.ExamMemberDto">
+select * from exam_member where exam_info_num = #{exam_info_num}
+</select>
+
+<delete id="teacherExamMemberDelete" parameterType="int">
+
+Delete From exam_member where exam_info_num = #{exam_info_num}
+</delete>
+
+
+<select id="examNotcheckMemberList" parameterType="int" resultType="onet.com.vo.ExamMemberDto">
+
+select member_id, member_name from member where class_name=(select class_name from exam_info where exam_info_num = #{exam_info_num}) and member_id not in (select member_id from exam_member where exam_info_num = #{exam_info_num});
+</select>
+
+
+<!-- 민지 10.22 시험일정 수정 끝 -->
+
+<select id="count_receive_note" parameterType="String" resultType="String">
+
+select count(*) from message where receive_member_id=#{user_name} and message_check=0
+
+</select>
+
+<!-- 양회준 11.5 강사 코멘트 수정 및 취소 -->
+	<update id="studentInfoCommentUpdate" parameterType="String">
+		update score_chart set score_chart_comment=#{param3} where member_id=#{param1} and exam_info_num=#{param2}
+	</update>
+	<select id="studentInfoCommentCancel" resultType="String">
+		select comment from score_chart where member_id=#{param1} and exam_info_num=#{param2}
+	</select>
+
+
+<select id="myTempExamList" resultType="onet.com.vo.ExamPaperDto" >
+	select * from exam_paper where exam_paper_status=0 and member_id=#{member_id} order by exam_paper_num desc limit #{begin}, 5
+</select>
+
+<select id="exampaperSearch" resultType="onet.com.vo.ExamPaperDto">
+	select ep.exam_paper_num, ep.exam_paper_name, ep.member_id, ep.exam_paper_desc, ep.exam_paper_status, m.class_name 
+	from exam_paper ep left outer join member m 
+	on (ep.member_id = m.member_id)
+	where ep.exam_paper_status=1 and m.member_id=#{member_id} and ep.exam_paper_enable=1
+	<include refid="teacherExampapersearch"></include>
+	order by exam_paper_num desc
+	limit #{begin}, 5
+</select>
+
+<sql id="teacherExampapersearch">
+	<if test="searchType=='all'">
+		<if test='keyword != ""'>
+			and (ep.exam_paper_name like concat('%',#{keyword},'%') or ep.exam_paper_desc like concat('%',#{keyword},'%'))
+		</if>
+	</if>
+	<if test='searchType =="n"'>
+		and ep.exam_paper_name like concat('%',#{keyword},'%')
+	</if>
+	<if test='searchType =="p"'>
+		and ep.exam_paper_desc like concat('%',#{keyword},'%')
+	</if>
+</sql>
+
+<select id="examinfoSearch" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info where class_name = (select class_name from member where member_id = #{member_id})
+	<include refid="teacherexaminfosearch"></include>
+	order by exam_info_date desc
+	limit #{begin}, 5
+</select>  
+
+<sql id="teacherexaminfosearch">
+	<if test="searchType2=='all'">
+		and (exam_info_name like concat('%',#{keyword},'%') or class_name like concat('%',#{keyword},'%'))
+	</if>
+	<if test='date_from != ""'>
+		and (select exam_info_date between #{date_from} and #{date_to})
+	</if>
+</sql>
+
+
+<select id="examManagementRoleCheck" resultType="String">
+	select role_code from member_role where member_id=#{member_id}
+</select>
+
+
+<!-- 11.06 현이 시험일정 등록 시 학생 답안지, 성적, 클래스성적 테이블 초기 데이터 입력 -->
+<select id="selectExamQuestion" parameterType="int" resultType="onet.com.vo.ExamQuestionDto">
+	select question_num, exam_question_seq 
+	from exam_question
+	where exam_paper_num = #{param1} 
+	order by exam_question_seq
+</select>
+<insert id="initializeStudentAnswer" parameterType="onet.com.vo.Student_answerDto">
+	insert into student_answer(member_id, exam_info_num, question_num, exam_question_seq, student_answer_choice, student_answer_status) 
+	values 
+	(#{member_id}, #{exam_info_num}, #{question_num}, #{exam_question_seq}, #{student_answer_choice}, #{student_answer_status})
+</insert>
+<insert id="initializeScoreChart" parameterType="onet.com.vo.Student_answerDto">
+	insert into score_chart
+	values(#{member_id}, #{exam_info_num}, #{score_chart_score}, #{score_chart_rank}, #{class_name}, '수고하셨습니다.')
+</insert>
+<insert id="initializeClassChart" parameterType="onet.com.vo.Class_chartDto">
+	insert into class_chart
+	values(#{class_name}, #{exam_info_num}, #{class_chart_avg})
+</insert>
+<!-- 11.09 현이 시험 등록시 학생에게 문자 보내기 -->
+<select id="selectExamInfo" parameterType="int" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info where exam_info_num = #{param1}
+</select>
+<select id="selectMember" parameterType="String" resultType="onet.com.vo.MemberDto">
+	select * from member where member_id = #{param1}
+</select>
+
+</mapper>
+
+

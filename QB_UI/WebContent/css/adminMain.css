@@ -1,0 +1,174 @@
+/*�쉶以�*/
+
+
+.wrapper-low {
+	display: inline-block;
+	margin-top: 20px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	width: 100%;
+}
+
+.pn-big {
+	height: 300px;
+	box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.weather-4 {
+	background: #87bfd3;
+}
+
+.weather-4:hover, .weather-4:focus, .weather-4:active,
+	.open .dropdown-toggle.weather-4 {
+	color: #fff;
+	background-color: #408aa5;
+}
+
+.QB_classroom {
+	margin-top:12px;
+	margin-bottom:8px;
+	width:100px;
+	height:100px;
+}
+
+.weather-4 .info {
+	background: #f2f2f2;
+	position: absolute;
+    width: 230px;
+    bottom: 20px;
+    margin-top: 10px;
+    color: #797979;
+    font-size: 14px;
+    padding-top: 5px;
+    font-weight: 600;
+}
+
+.weather-4 .info i {
+	font-size: 15px;
+	margin-bottom: 3px;
+	margin-top: 5px;
+}
+
+.weather-4 .info h3 {
+	font-weight: 900;
+	margin-bottom: 0px;
+}
+
+.weather-4 .info p {
+	margin-left: 10px;
+	margin-right: 10px;
+	/* margin-bottom: 16px; */
+	font-size: 15px;
+	font-weight: 700;
+}
+
+/* �쁽�씠 */
+.searchRowDiv {
+	margin-bottom: 10px;
+    margin-top: -10px;
+	margin-left:0;
+	margin-right:0;
+}
+
+.searchRightBtnDiv {
+	display: inline-block;
+	width: 30%;
+	margin-right: 5px;
+}
+
+.searchRowRightDiv {
+	text-align: right;
+}
+
+#makeNewClassBtn {
+	width: 48%;
+	margin-bottom: 5px;
+	margin-right: 5px 
+}
+
+#classSearchBtn {
+	width: 15%;
+	margin-bottom: 5px;
+}
+
+/* �쁽�씠 css 異붽� */
+.classDiv {
+	padding-bottom: 30px;
+	padding-top: 18px;
+}
+
+.classDivOverFlow {
+	/* width: 230px; */
+	overflow:hidden;
+	/* word-wrap:break-word; */
+	word-break: break-all; 
+	padding-right: 20px;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    color: white;
+	font-weight: 900;
+	font-size: 24px;
+	padding-right: 20px;
+    padding-left: 20px;
+}
+
+.centered {
+	font-weight: 700;
+}
+
+.classBtnDiv {
+	width: 230px;
+}
+
+.goright button i {
+	color: white;
+}
+
+.classUsersIcon {
+	margin-left: 49%;
+}
+
+.btnIcon {
+	color: white;
+}
+
+.classDivSize {
+	width: 230px;
+	height: 330px;
+	margin-top: 15px;
+}
+
+#searchBtn {
+	width: 14%;
+	margin-bottom: 5px;
+}
+
+#pastClassBtn {
+	width: 20%;
+}
+
+.classDeleteModelBody {
+	
+}
+
+#searchClassTerm {
+	display: inline-block;
+	width: 48%;
+}
+
+.loadingImgDiv {
+    position:absolute;
+    z-index:9999; 
+    background:#f0f0f0; 
+    filter:alpha(opacity=50); 
+    opacity:alpha*0.5; 
+    margin:auto; 
+    padding:0; 
+}
+
+#loadingImg {
+
+}
+

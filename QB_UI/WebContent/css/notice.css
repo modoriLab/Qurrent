@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+.noticePageContent{
+	margin-bottom: 20px;
+}
+
+.noticePanelDiv {
+	margin-bottom: 20px;
+}
+
+.notice_header{
+	text-align:center;
+}
+.table-inbox-notice{
+	text-align:center;
+}
+.notice_name{
+	width:45%;
+	cursor:pointer;
+}
+.exam_info_name{
+	cursor:pointer;
+}
+
+.table-inbox-notice-wrap {
+	
+}
+
+.table-inbox-exam{
+	text-align:center;
+	vertical-align:middle;
+}
+
+#noticeWrite_btn{
+	float:right;
+}
+
+#noticeWrite_btnAdmin{
+	float:right;
+}
+
+.exam_info_member{
+	width:20%;
+}
+.exam_info_num{
+	width:20%;
+}

@@ -1,0 +1,74 @@
+/* 
+	@JSP:studentInfo.css
+	@DATE:2018-10-14
+	@Author:양회준
+	@Desc:학생 & 성적 관리 css(스토리보드 20 of 41)	
+*/
+@charset "UTF-8";
+	.checkName{
+      height:350px;
+      overflow:auto;
+    }
+    
+	.wrapper-low {
+	    display: inline-block;
+	    margin-top: 20px;
+	    padding-left: 15px;
+	    padding-right: 15px;
+	    padding-bottom: 0px;
+	    padding-top: 0px;
+	    width: 100%;
+	}
+	.pnHeight{
+      height: 400px;
+    	box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+    }
+	.btn-theme-right{
+      color: #fff;
+      background-color: #4ECDC4;
+      border-color: #48bcb4;
+      margin-right: 15px;
+      margin-bottom: 15px;
+    }
+    .table-inbox tr td:first-child {
+        width:30%;
+    }
+    
+    #studentListTh {
+        padding: 5px;
+    	text-align: center;
+    }
+    .studentListMembers{
+	cursor:pointer;
+	}
+	.tab2studentListMembers{
+		cursor:pointer;
+	}
+	/* 태용	*/
+	.deleteline{
+	position:relative;
+	border-radius: 0px 10px 10px 10px;
+	padding : 10px;
+	/* background-color:#F6F6F6; */
+	margin-bottom : 10px;
+	box-shadow: 0px 0px 5px 0px grey;
+	overflow-y:auto;
+	}
+	.div-left{
+	float:left;
+	width:120px;
+	padding:10px 0px;
+	position: relative;
+	}
+	.testIcon{
+	width:100%;
+	}
+	.exam_info_name, .exam_paper_name{
+	float:left;
+	padding:0px;
+	}
+	.div-right{
+	position:absolute;
+	right:10px;
+	bottom:10px;
+	}

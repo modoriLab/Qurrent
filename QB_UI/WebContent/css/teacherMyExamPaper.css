@@ -1,0 +1,131 @@
+.wrapper-low {
+	display: inline-block;
+	margin-top: 20px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	width: 100%;
+}
+
+.pn-big {
+	height: 300px;
+	box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.weather-4 {
+	background: #3cb371;
+}
+
+.img {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+}
+
+button.add {
+	float: left;
+	right: 15px;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+button.buttonGroup {
+	float: right;
+	right: 15px;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+/* datatables 수정 */
+.dataTables_length, .dataTables_info {
+	display: none;
+}
+
+.dataTables_paginate {
+	margin: 0 auto;
+}
+
+/* 현이 teacherMyExamPaper.jsp 시험지 만들기  css 시작 */
+.makeExamSelectCategory {
+	width: 19%;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+.makeExamTextField {
+	width: 78%;
+	margin-right: 5px;
+	display: inline-block;
+}
+
+#makeExamSelectBtn {
+	width: 20%;
+}
+
+.questionDiv {
+	margin-bottom: 30px;
+}
+
+#pickQuestionBtn {
+	margin-right: 5%;
+	width: 15%;
+}
+
+.questionScoreInputTag {
+	width: 65%;
+	display: inline-block;
+}
+
+.questionImg {
+	width: 50%;
+}
+
+#leftMakeExamDiv, #rightMakeExamDiv {
+	overflow: scroll;
+	height: 500px;
+}
+
+.questionRowBtnDiv {
+	margin-top: 20px;
+}
+
+.pickQuestionBtnDiv, .makeExamBtnDiv {
+	text-align: center;
+}
+
+.makeExamFirstRow {
+	height: 100px;
+}
+
+.makeExamFirstRow #makeExamFirstRowText {
+	vertical-align: middle;
+}
+
+#makeExamFirstRowText {
+	font-size: 16px;
+	padding-left: 5%;
+}
+/* 현이 teacherMyExamPaper.jsp 시험지 만들기  css 시작 */
+
+.miri span{
+	font-size: 15px;
+}
+
+
+
+/* 한결 시험지 미리보기 */
+#examBox{
+	border-right: 1px solid black;
+}
+.preview_exam_each{
+	text-align: left; 
+	margin-top: 10px;
+}
+.exampaneldetailed{
+	overflow:scroll;
+	height:650px;
+}
+/* 끝 - 시험지 미리보기 */

@@ -1,0 +1,57 @@
+
+/*****민지*******/
+#messagebox {
+	margin-top: 0px;
+}
+
+#messageTable {
+	padding-left: 10%;
+	padding-right: 10%;
+}
+#sendMessageform {
+	padding-left: 15%;
+	padding-right: 5%;
+}
+.checkName {
+	height: 500px;
+	overflow: auto;
+}
+#messageform {
+	padding-left: 10%;
+	padding-right: 5%;
+}
+#messageBtn{
+	    text-align: right;
+}
+
+.examstudent {
+	margin-left: 10%;
+
+
+}
+.messagepanel{
+	height:800px;
+}
+
+#agree, #agreeAll {
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	margin-top: 0;
+	margin-left: 10px;
+	vertical-align: -2px;}
+
+
+#messageSelect>div:hover, #messageSelect>div:focus {
+background: #fafafa;
+	color: #4ECDC4;
+	border-right: 3px solid #1fb5ad;
+	
+	
+}
+
+#messageSelect>div{
+	border-top: 1px solid #f2f3f6;
+	padding: 15px;
+}
+/****************/

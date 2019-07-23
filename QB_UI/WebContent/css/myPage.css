@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+/* 현이 mypage css */
+.inlineTextField {
+	display: inline;
+	width: 65%;
+}
+
+.myPageBtnControl {
+	margin-bottom: 5px;
+}
+
+.inlineTextFieldBtn {
+	text-align: right;
+}
+
+.infoBtnDiv {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.formArrayHyunyi {
+	padding-left: 10%;
+	padding-right: 5%;
+}

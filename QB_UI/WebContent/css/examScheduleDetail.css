@@ -1,0 +1,49 @@
+@charset "UTF-8";
+/* 현이 */
+.examImgDiv {
+	text-align: center;
+}
+
+.examImgDiv img {
+	width: 220px;
+}
+
+.examImgDiv img h3 {
+	padding-top: 10px;
+}
+
+#examInfoName{
+	margin-left:40px;
+	margin-right:40px;
+}
+
+#clockImg {
+	width: 70px;
+}
+
+.clockImgDiv {
+	text-align: right;
+}
+
+.examBtnDiv {
+	text-align: center;
+}
+
+#examBtn {
+	width: 200px;
+	
+}
+
+.panelControl {
+	padding-top: 40px;
+    padding-right: 60px;	
+}
+
+.examScheduleBtnDiv {
+	margin-bottom: 30px;
+	text-align: center;
+}
+
+.examScheduleTable {
+	margin-bottom: 70px;
+}

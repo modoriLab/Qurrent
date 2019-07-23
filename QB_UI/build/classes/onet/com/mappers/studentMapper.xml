@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="onet.com.student.dao.StudentDao">
+
+<!-- 10.19 현이 학생 답안지 제출 시작 -->
+<update id="examAnswerInsert" parameterType="onet.com.vo.Student_answerDto">
+	update student_answer 
+	set 
+		student_answer_choice = #{student_answer_choice}, 
+		student_answer_status = #{student_answer_status} 
+	where 
+		member_id = #{member_id} and 
+		exam_info_num = #{exam_info_num} and 
+		question_num = #{question_num} and 
+		exam_question_seq = #{exam_question_seq}  
+</update>
+
+<select id="searchAnswer" parameterType="int" resultType="String">
+	select question_answer from question where question_num = #{question_num}
+</select>
+
+<update id="score_chartInsert" parameterType="onet.com.vo.Score_chartDto">
+	update score_chart 
+	set
+		score_chart_score =
+		(select 
+			IFNULL(sum(exam_question_score), 0)
+			from exam_question
+			where 
+			question_num in 
+			(select question_num from student_answer 
+				where student_answer_status = 1 
+				and member_id = #{param1}
+				and exam_info_num = #{param2}
+			)
+			and exam_paper_num = (select exam_paper_num from exam_info where exam_info_num = #{param2}))
+	where member_id = #{param1}
+	and exam_info_num = #{param2};
+</update>
+
+<select id="selectRank" parameterType="int" resultType="onet.com.vo.Score_chartDto">
+	select member_id, score_chart_score, rank() over(order by score_chart_score desc) as score_chart_rank 
+	from score_chart
+	where exam_info_num = #{exam_info_num}
+	order by score_chart_score desc;
+</select>
+
+<update id="updateRank">
+	update score_chart
+	set score_chart_rank = 
+		case 
+		<foreach item="item" collection="param1" separator=" ">
+			 	when member_id = #{item.member_id} then #{item.score_chart_rank}
+		</foreach>
+		end 
+	where exam_info_num = #{param2};
+</update>
+
+<!-- <select id="countClassChart" parameterType="int" resultType="int">
+	select count(*) 
+	from class_chart
+	where exam_info_num = #{exam_info_num}
+</select> -->
+
+<!-- <insert id="class_chartInsert">
+	insert into class_chart (class_name, exam_info_num, class_chart_avg)
+	values(
+	(select class_name from member where member_id=#{param1}), 
+	#{param2}, 
+	(select avg(score_chart_score) 
+	from score_chart
+	group by exam_info_num
+	having exam_info_num = #{param2})
+	);
+</insert> -->
+
+<update id="class_chartUpdate">
+	update class_chart 
+	set 
+		class_chart_avg = 
+			(select avg(score_chart_score)
+			from score_chart
+			group by exam_info_num
+			having exam_info_num = #{param2})
+	where 
+		class_name = (select class_name from member where member_id=#{param1}) and
+		exam_info_num = #{param2}
+</update>
+
+<select id="selectQuestion" parameterType="int" resultType="int">
+	select question_num 
+	from exam_question 
+	where exam_paper_num = 
+		(select exam_paper_num 
+		from exam_info 
+		where exam_info_num = #{param1});
+</select>
+
+<update id="updateCorrectRatio" parameterType="int">
+	update question
+	set question_correct_ratio = 
+	(
+		(select count(*) 
+		from student_answer
+		where question_num = #{param1}
+		and student_answer_status = 1)
+	/ 
+		(select count(*) 
+		from student_answer 
+		where question_num = #{param1})
+	) 
+	* 100
+	where question_num = #{param1};
+</update>
+<!-- 10.19 현이 학생 답안지 제출 끝 -->
+
+<!-- 10.23 현이 학생 지난 시험 보기 시작 -->
+<select id="searchPastExam" parameterType="String" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info
+	where exam_info_num in (select distinct exam_info_num from student_answer where member_id=#{param1})
+	order by exam_info_num desc
+</select>
+
+<select id="searchStudentName" parameterType="String" resultType="onet.com.vo.Score_chartDto">
+	select m.member_name, sc.exam_info_num, sc.score_chart_comment
+	from member m join score_chart sc
+	on m.member_id=sc.member_id
+	where m.member_id = #{param1}
+	order by sc.exam_info_num desc
+</select>
+
+<!-- 양회준 11.5 수정 -->
+<select id="searchPastExamKeyword" resultType="onet.com.vo.ExamInfoDto">
+	<!-- select * from exam_info
+	where (exam_info_num in (select distinct exam_info_num from student_answer where member_id=#{param1}))
+	and (exam_info_name like concat('%', #{param2}, '%') || exam_info_desc like concat('%', #{param2}, '%'))
+	order by exam_info_num desc -->
+	select ei.exam_info_num, ei.exam_paper_num, ei.class_name, ei.exam_info_name, ei.exam_info_desc, ei.exam_info_member,
+	ei.exam_info_date, ei.exam_info_start, ei.exam_info_end, ei.exam_info_time, sc.score_chart_comment
+	from member m join exam_info ei join score_chart sc
+	on m.member_id=sc.member_id and ei.exam_info_num=sc.exam_info_num
+	where m.member_id=#{param1}
+	and (ei.exam_info_name like concat('%', #{param2}, '%') || ei.exam_info_desc like concat('%', #{param2}, '%'))
+	order by ei.exam_info_num desc
+</select>	
+<!-- 10.23 현이 학생 지난 시험 보기 끝 -->
+
+<!-- 10.24 현이 학생 지난 시험지 보기 시작 -->
+
+<select id="examPaperDoQuestion" resultType="onet.com.vo.ExamPaperDoQuestionDto"><!-- 문제 정보 가져오기 -->
+	select q.question_num, q.question_type, q.question_name, q.question_img, q.question_answer, 
+	eq.exam_question_seq, eq.exam_question_score 
+	from question q join exam_question eq
+	on (q.question_num = eq.question_num)
+	where eq.exam_paper_num = 
+	(select exam_paper_num from exam_info where exam_info_num = #{exam_info_num})
+	order by eq.exam_question_seq
+	<if test="begin != 0 or rowPerPage != 0">
+		limit #{begin}, #{rowPerPage}
+	</if>
+</select>	
+
+<select id="examPaperDoQuestion_choice" parameterType="int" resultType="onet.com.vo.Question_choiceDto"><!-- 문제 보기 가져오기 -->
+	select question_num, question_choice_num, question_choice_content, question_choice_image 
+	from question_choice
+	where question_num in 	
+	(select q.question_num
+	from question q join exam_question eq
+	on (q.question_num = eq.question_num)
+	where eq.exam_paper_num = 
+	(select exam_paper_num from exam_info 
+	where exam_info_num = #{exam_info_num})
+	)
+	order by question_num, question_choice_num
+</select>
+
+
+
+
+<select id="selectStudentAnswer" resultType="onet.com.vo.Student_answerQuesDto">
+	select a.member_id, a.exam_info_num, a.question_num, a.exam_question_seq, ifnull(a.student_answer_choice, "") as student_answer_choice, a.student_answer_status,
+	q.question_type, q.question_name, q.question_img, q.question_answer, q.question_correct_ratio, q.question_select_count, q.sm_category_code, q.level_code 
+	from student_answer a join question q
+	on a.question_num = q.question_num
+	where a.member_id = #{param1}
+	and a.exam_info_num = #{param2}
+</select>
+
+<select id="selectStudentWrongAnswer" resultType="onet.com.vo.Student_answerQuesDto">
+	select a.member_id, a.exam_info_num, a.question_num, a.exam_question_seq, ifnull(a.student_answer_choice, "") as student_answer_choice, a.student_answer_status,
+	q.question_type, q.question_name, q.question_img, q.question_answer, q.question_correct_ratio, q.question_select_count, q.sm_category_code, q.level_code
+	from student_answer a join question q
+	on a.question_num = q.question_num
+	where a.member_id = #{param1}
+	and a.exam_info_num = #{param2}
+	and a.student_answer_status = 0
+</select>
+
+<select id="examPaperDoWrongQuestion" resultType="onet.com.vo.ExamPaperDoQuestionDto">
+	select q.question_num, q.question_type, q.question_name, q.question_img, q.question_answer, 
+	eq.exam_question_seq, eq.exam_question_score
+	from question q join exam_question eq
+	on (q.question_num = eq.question_num)
+	where 
+	eq.exam_paper_num = (select exam_paper_num from exam_info where exam_info_num = #{exam_info_num}) 
+	and q.question_num in (select question_num from student_answer where exam_info_num = #{exam_info_num} and member_id = #{member_id} and student_answer_status = 0)
+	order by eq.exam_question_seq
+	<if test="begin != 0 or rowPerPage != 0">
+		limit #{begin}, #{rowPerPage}
+	</if>
+</select>
+
+<select id="examPaperDoWrongQuestion_choice" parameterType="int" resultType="onet.com.vo.Question_choiceDto"><!-- 문제 보기 가져오기 -->
+	select question_num, question_choice_num, question_choice_content, question_choice_image 
+	from question_choice
+	where question_num in 	
+	(select q.question_num
+	from question q join exam_question eq
+	on (q.question_num = eq.question_num)
+	where eq.exam_paper_num = 
+	(select exam_paper_num from exam_info 
+	where exam_info_num = #{param1})
+	)
+	order by question_num, question_choice_num
+</select>
+<!-- 10.24 현이 학생 지난 시험지 보기 끝 -->
+
+<!-- 10.29민지 학생이쪽지보내기 -->
+<insert id="sendTeacherMessage" parameterType="onet.com.vo.MessageDto" >
+insert into message (send_member_id,receive_member_id,message_content)
+	values(#{send_member_id}, #{receive_member_id}, #{message_content})
+</insert>
+
+<select id="wrongQuestionCount" resultType="int"><!-- 한 시험지에 담긴 문제의 개수 -->
+	select count(question_num)
+	from student_answer
+	where exam_info_num = #{param2}
+	and member_id = #{param1}
+	and student_answer_status = 0
+</select>
+
+
+<!-- 10.29 재훈 학생 자기 등수 확인 시작 -->
+<select id="myRank" parameterType="String" resultType="onet.com.vo.Score_chartDto">
+
+select * from score_chart s join member m on (s.member_id = m.member_id) where m.member_id = #{param1} and s.exam_info_num = #{param2}
+
+</select>
+
+<!-- 양회준 11.2 시험 응시 목록 체크 -->
+<select id="checkExamMember" resultType="int">
+	select count(exam_info_num) from exam_member where member_id = #{param1} and exam_info_num = #{param2}
+</select>
+
+<!-- 11.08 현이 오늘 시험 체크 -->
+<select id="selectTodayExam" parameterType="String" resultType="onet.com.vo.ExamInfoDto">
+	select * from exam_info
+	where exam_info_date = curdate()
+	and class_name = (select class_name from member where member_id = #{param1}) 
+	order by exam_info_start desc
+</select>
+</mapper>

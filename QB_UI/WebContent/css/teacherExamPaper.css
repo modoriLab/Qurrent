@@ -1,0 +1,90 @@
+/*****민지*****/
+#examBox {
+	border-right: solid 1px black;
+}
+
+#timer {
+	margin-left: 10px;
+	width: 60%;
+}
+
+#exam {
+	padding: 15px;
+	font-size: 15px;
+}
+
+.tg {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+
+.tg td {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	padding: 10px 5px;
+	border-style: solid;
+	border-width: 1px;
+	overflow: hidden;
+	word-break: normal;
+	border-color: black;
+}
+
+.tg th {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	padding: 10px 5px;
+	border-style: solid;
+	border-width: 1px;
+	overflow: hidden;
+	word-break: normal;
+	border-color: black;
+}
+
+.tg .tg-baqh {
+	text-align: center;
+	vertical-align: top
+}
+
+.tg .tg-0lax {
+	text-align: left;
+	vertical-align: top
+}
+
+.qnumber {
+	background-color: #EAEAEA;
+	color: #22741C;
+	font-weight: bold;
+}
+
+.qname {
+	background-color: #EAEAEA;
+	color: #22741C;
+	font-weight: bold;
+}
+
+.tg-baqh {
+	font-weight: bold;
+}
+
+.exampaneldetail {
+	height: 700px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+.exampaneldetailBtn{
+	margin-top:10px;
+	margin-left:90%;
+	width:150px;
+	
+}
+.exampaneldetailsubject{
+	padding-left:10px;
+	font-weight: bold;
+}
+
+#sendMessageform{
+	height: 500px;
+	
+}

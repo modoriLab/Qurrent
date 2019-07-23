@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+	<!-- 비동기 처리 jsp 파일 -->
+	<definition name="home.*" template="/WEB-INF/views/user/layout.jsp">
+		<put-attribute name="title" value="3TEAM"/>
+		<put-attribute name="content" value="/WEB-INF/views/user/{1}.jsp"/>
+	</definition>
+	<definition name="ajax.*.*" template="/WEB-INF/views/ajax/{1}/{2}.jsp"/>
+	
+	<!-- 관리자 클래스 상세보기 페이지  : common.adminClass.권한.기능.파일명  -->
+	<definition name="common.adminClass.*.*.*" template="/WEB-INF/views/inc/layout.jsp">
+		    <put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp" />
+		    <put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp" />
+		    <put-attribute name="sidebar"  value="/WEB-INF/views/{1}/inc/adminClassSidebar.jsp" />			    
+		    <put-attribute name="content" value="/WEB-INF/views/common/{2}/{3}.jsp" />   
+	</definition>
+	
+	
+	<!-- 공통 페이지 폴더 구조  : common.권한.기능.파일명  -->
+	<definition name="common.*.*.*" template="/WEB-INF/views/inc/layout.jsp">
+		    <put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp" />
+		    <put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp" />
+		    <put-attribute name="sidebar"  value="/WEB-INF/views/{1}/inc/sidebar.jsp" />			    
+		    <put-attribute name="content" value="/WEB-INF/views/common/{2}/{3}.jsp" />   
+	</definition>
+	
+	<!-- 학생 시험보기 페이지: 레이아웃 없는 jsp 페이지 -->
+	<definition name="exam.*.*" template="/WEB-INF/views/{1}/{2}.jsp">		    
+
+	</definition>
+	<!-- 각 권한 별 폴더 구조  : 권한.파일명   -->
+		<definition name="*.*" template="/WEB-INF/views/inc/layout.jsp">
+
+		    <put-attribute name="title"   value="welcome bitcamp" />
+		    <put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp" />
+		    <put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp" />
+		    <put-attribute name="sidebar"  value="/WEB-INF/views/{1}/inc/sidebar.jsp" />			    
+		    <put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />   
+	</definition>
+	
+</tiles-definitions>

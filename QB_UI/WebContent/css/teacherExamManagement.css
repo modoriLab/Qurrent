@@ -1,0 +1,116 @@
+
+    .dataTables_filter, .dataTables_empty, .dataTables_paginate{
+	display: none;
+}
+
+.fix{
+	border: 1px solid #ccc;
+    border-radius: 8px;
+    top: 55px;
+    left: 55%;
+    margin: 0 0 0 -81px;
+    position: fixed;
+    padding: 5px 0;
+    background: rgba(250, 250, 250, 0.75);
+    z-index : 1060;
+}
+.fix a {
+    color: #FFF;
+    display: block;
+    float: left;
+    height: 32px;
+    text-decoration: none;
+    text-indent: -999em;
+    width: 80px;
+}
+
+a.print {
+    background: url(../img/icon-print.png) no-repeat 50% 50%;
+}
+a.close {
+    background: url(../img/icon-close.png) no-repeat 50% 50%;
+}
+.searchRightBtnDiv {
+	display: inline-block;
+	width: 30%;
+	margin-right: 5px;
+}
+#searchBtn {
+	width: 14%;
+	margin-bottom: 5px;
+	margin-right:0;
+}
+#searchBtn2 {
+	width: 14%;
+	margin-bottom: 5px;
+}
+.searchtitle{
+	text-align:right;
+	padding : 0px 0px 0px 200px;
+	width:100%;
+	float: right;
+	
+}
+.pdf_download a:hover{
+	color:#063f54;
+}
+.deleteline{
+	position:relative;
+	border-radius: 0px 10px 10px 10px;
+	padding : 10px;
+	/* background-color:#F6F6F6; */
+	margin-bottom : 10px;
+	box-shadow: 0px 0px 5px 0px grey;
+	overflow-y:auto;
+}
+.my_exam{
+	background-color:#F6F6F6;
+}
+.div-left{
+	float:left;
+	width:120px;
+	padding:10px 0px;
+	position: relative;
+}
+.div-left:hover .testIcon{
+	background-color:#EAEAEA;
+	cursor : pointer;
+	opacity: 0.3;
+	transition: .5s ease;
+}
+.div-left:hover .middle{
+	opacity:1;
+	cursor : pointer;
+}
+.middle{
+	transition: .5s ease;
+  	opacity: 0;
+	position: absolute;
+	top: 25%;
+	left: 25%;	
+}
+.div-right{
+	position:absolute;
+	right:10px;
+	bottom:10px;
+}
+.exam_info_name, .exam_paper_name{
+	float:left;
+	padding:0px;
+	/* padding-left:70px; */
+}
+.testIcon{
+	width:100%;
+}
+.miriIcon{
+	width:70%;
+}
+.emptydata{
+	height:500px;
+	text-align:center;
+	padding: 10% 0%;
+	
+}
+.img-empty{
+	width:20%;
+}

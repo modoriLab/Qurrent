@@ -1,0 +1,10 @@
+@charset "UTF-8";
+.authText {
+	display: inline;
+	width: 74%;
+}
+
+.authBtn {
+	width: 25%;
+	height: 35px;
+}

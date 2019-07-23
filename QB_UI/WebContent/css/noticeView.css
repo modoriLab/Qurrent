@@ -1,0 +1,125 @@
+@charset "UTF-8";
+
+#noticeViewBox{
+margin-top:50px;
+margin-left:200px;
+margin-right:200px;
+margin-bottom:50px;
+}
+
+div.noticeContent{
+padding-top:10px;
+padding-left:40px;
+padding-right:40px;
+padding-bottom:10px;
+}
+
+#commentSubmit{
+margin-top:10px;
+margin-left:10px;
+margin-right:10px;
+margin-bottom:10px;
+}
+
+#commentWriter{
+margin-top:10px;
+margin-left:10px;
+margin-right:10px;
+margin-bottom:10px;
+}
+
+div.noticeView_Comments_1{
+/* height:50px; */
+margin-top:10px;
+margin-bottom:10px;
+}
+
+div.noticeView_Comments_2{
+/* height:50px; */
+margin-top:5px;
+margin-left:15px;
+margin-bottom:10px;
+}
+
+div.noticeView_CommentsWrite{
+margin-top:50px;
+margin-bottom:20px;
+height:100px;
+/* border:gray 1px solid; */
+}
+
+textarea {
+    resize: none;
+}
+
+/* 현이 css 추가 */
+.noticeDetailBtnDiv {
+	text-align: center;
+}
+
+.noticeDetailWriterDiv {
+	margin-right: 5%;
+}
+#replyAddBtn{
+	width:100%;
+	height:60px;
+	border-radius: 10px;
+}
+#replyArea{
+	width:100%;
+	height:60px;
+	border-radius: 10px;
+}
+.img{
+	width:100px;
+	height:100px;
+}
+.detach{
+	margin-left: -15px;
+}
+.replyInput{
+	width:500px;
+	height:30px;
+	display:inline-block;
+	border-radius: 5px;
+}
+.replyAdd{
+	cursor: pointer;
+}
+.replyReplyAdd{
+	cursor: pointer;
+}
+.reply{
+	cursor: pointer;
+}
+.replyReply{
+	cursor: pointer;
+}
+.update{
+	cursor: pointer;
+}
+.updateReply{
+	cursor: pointer;
+}
+.delete{
+	cursor: pointer;
+}
+.noticeListbutton{
+	background: #063f54;
+	width:100px;
+}
+.noticeDeletebutton{
+	background: #B9062F;
+	width:100px;
+}
+.noticeUpdatebutton{
+	background: #337ab7;
+	border-color: #337ab7;
+	width:100px;
+}
+.filediv{
+	margin-left: -15px;
+}
+.comcom2{
+	border-radius: 5px;	
+}

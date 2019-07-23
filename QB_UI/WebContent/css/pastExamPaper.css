@@ -1,0 +1,270 @@
+@charset "UTF-8";
+
+#examBox {
+	border-right: solid 1px black;
+}
+
+#timer {
+	margin-left: 10px;
+	width: 60%;
+}
+
+#exam {
+	padding: 15px;
+	font-size: 15px;
+}
+
+.tg {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+
+.tg td {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	padding: 10px 5px;
+	border-style: solid;
+	border-width: 1px;
+	overflow: hidden;
+	word-break: normal;
+	border-color: black;
+}
+
+.tg th {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	padding: 10px 5px;
+	border-style: solid;
+	border-width: 1px;
+	overflow: hidden;
+	word-break: normal;
+	border-color: black;
+}
+
+.tg .tg-baqh {
+	text-align: center;
+	vertical-align: top;
+	width: 41px;
+}
+
+.tg .tg-0lax {
+	text-align: left;
+	vertical-align: top
+}
+
+.qnumber {
+	background-color: #EAEAEA;
+	color: #22741C;
+	font-weight: bold;
+}
+
+.qname {
+	background-color: #EAEAEA;
+	color: #22741C;
+	font-weight: bold;
+}
+
+.tg-baqh {
+	font-weight: bold;
+}
+
+.exampaneldetail {
+	height: 700px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	padding-top: 20px;
+}
+
+/* .exampaneldetailBtn {
+	margin-top: 10px;
+	margin-left: 90%;
+	width: 150px;
+} */
+
+.exampaneldetailsubject {
+	padding-left: 10px;
+	font-weight: bold;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+#sendMessageform {
+	height: 500px;
+}
+
+/*  */
+.wrap {
+	position: relative;
+}
+/* 정답, 오답 */
+.exam_ox {
+	width: 60px;
+	height: 45px;
+	position: absolute;
+	left: 0px;
+	top: 4px;
+}
+/* 내가 표시한 답 */
+.exam_check {
+	width: 20px;
+	height: 15px;
+	position: absolute;
+	left: 11px;
+}
+
+/* OMR 표시 */
+.check_num_myCheck {
+	background-color: red;
+}
+
+/* 현이 progress bar  */
+#progressbar1 {
+	margin-top: 20px;
+	margin-bottom: 25px;
+}
+
+/* .ui-widget-header {
+	background-image: none !important;
+	background-color: #4ECDC4 !important;
+} */
+
+/* 현이 시험지 테이블 형식 */
+.questionTd {
+	width: 50px;
+	padding-right: 10px;
+	text-align: right;
+    vertical-align: top;
+}
+
+.questionTable {
+	margin-bottom: 60px;
+	font-size: 15px;
+	line-height: 1.6;
+}
+
+.questionTr {
+	height: 20px;
+}
+
+.questionSpace {
+	padding-bottom: 15px;
+}
+    
+    
+    /*답지 체크 부분*/
+    .answerChkDiv {
+        position: relative;
+    }
+
+    /*전체 포지션*/
+    .oximg_v {
+        position: absolute;
+        width: 30px; 
+        height: 30px;
+        left: 20px;
+        top: -10px;
+        display: none;
+    }
+    
+    /*문제의 라디오 버튼 안보이게*/
+    .exampaneldetail input[type="radio"] {
+        display:none;
+    }
+    
+    /*라벨로 싸인 문제 보기 굵기 얇게 */
+    .exampaneldetail label {
+        font-weight: 400;
+    }
+    
+    /*답안지 체크 이미지 포지션*/
+    .answer_oximg_v {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        left: 9px;
+        top: -6px;
+        display: none;
+    }
+    
+    /*답안지 표의 width 크기 동일하게*/
+    .answer_choice {
+        width: 48px;
+    }
+    
+    /*답안지 표의 label 마진 없애기*/
+    .answer_choice label {
+        margin-bottom: 0px;
+    }
+    
+    /*문제 중 이미지가 있을 경우 크기 조절*/
+    .question_img {
+        width: 300px;
+        margin-bottom: 20px;
+    }
+    
+    
+    /* 문제 보기에서 이미지 크기 조절 */
+    .answer_choice_image {
+    	width: 30%;
+    	margin-bottom: 10px;
+    	margin-left: 7%;
+    }
+    
+    
+    /* 10.24 pastExamPaper 페이지 css 추가 */
+    /* 문제 정답/오답 이미지 표기 */
+    .oximg_s, .oximg_o {
+    	position: absolute;
+	    width: 70px;
+	    height: 70px;
+	    left: -6px;
+	    top: -20px;
+    	display: none;
+    }
+    
+    /* 보기에서 정답 표시 */
+    .soximg_o {
+    	position: absolute;
+	    width: 20px;
+	    height: 20px;
+	    top: 3px;
+	    left: 22px;
+    	display: none; 
+    }
+    
+    /* 답안지 문제번호에 정답 표기 */
+    .oximg_s_answer, .oximg_o_answer {
+        position: absolute;
+	    width: 30px;
+	    height: 30px;
+	    left: 3px;
+    	top: -4px;
+    	display: none;
+    }
+    
+    .answer_oximg_o {
+    	position: absolute;
+	    width: 20px;
+	    height: 20px;
+	    left: 8px;
+    	display: none;
+    }
+    
+    #prevPageSpan, #nextPageSpan {
+    	display: inline-block;
+    	width: 100px;
+    }
+    
+    .pastExamBtnDiv, .pastExamBtnDiv2 {
+    	text-align: center;
+    }
+    
+    
+    
+    
+    
+    
+   
+ 
